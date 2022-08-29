@@ -1,3 +1,6 @@
+---
+marp: true
+---
 <!-- marp: true -->
 <!-- theme: uncover -->
 <!-- class: invert -->
@@ -6,6 +9,11 @@
 <!-- author: Rafik Mas'ad Nasra -->
 <!-- title: Introducción a microservicios -->
 <!-- size: 16:9 -->
+
+<style>    
+    ul { margin: 0; }
+    section.invert p { text-align: left; }
+</style>
 
 # Microservicios
 ## Por Rafik Mas'ad Nasra
@@ -61,7 +69,7 @@
 
 Microservicios es un tema popular...
 
-### Y prácticamente todas las grandes (buenas) empresas escriben sus aplicaciones con este patrón arquitectónico.
+**Y prácticamente todas las grandes (buenas) empresas escriben sus aplicaciones con este patrón arquitectónico.**
 
 Netflix, Uber, SoundCloud, Amazon, Spotify y Ebay son algunos ejemplos
 
