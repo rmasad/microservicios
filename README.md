@@ -14,8 +14,8 @@ Ustedes aprenderán a... diseñar e implementar un sistema en una arquitectura d
 ## 🗃️ Unidades
 
 - [Unidad 1: Introducción a microservicios](./01_Introducci%C3%B3n/)
-- Unidad 2: Estrategias de división de servicios
-- Unidad 3: Comunicación entre servicios
+- [Unidad 2: Estrategias de división de servicios](./02_Modelamiento/)
+- [Unidad 3: Comunicación entre servicios](./03_Comunicación/)
 - Unidad 4: Implementación
 - Unidad 5: Interfaz
 - Unidad 6: Despliegue (deployment)
