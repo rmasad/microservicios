@@ -431,6 +431,16 @@ Existen dos formas de implementar una _Saga_:
 
 ---
 
+<!-- _class: default -->
+
+# 📝 Tarea
+
+Implementa el microservicio asignado para el trabajo final. Para esto debes implementar las operaciones como una API REST y emitir eventos por cada transacción. Debe incluir documentación, esquemas, versionamiento y manejo de errores.
+
+Sube el trabajo al GitLab asignado.
+
+---
+
 ## 📚 Material complementario
 - Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capitulo 5 y 6.
 - Hector Garcia-Molina y Kenneth Salem, "Sagas" ACM Sigmod Record 16, no. 3 (1987): 249–59. 
