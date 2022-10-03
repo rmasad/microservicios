@@ -1,0 +1,11 @@
+services:
+  demo_04_message_broker:
+    image: rabbitmq:3-management-alpine
+    ports:
+        - 5672:5672
+        - 15672:15672
+
+networks:
+  default:
+    name: demo_04
+    external: true

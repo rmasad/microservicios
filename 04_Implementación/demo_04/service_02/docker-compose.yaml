@@ -1,0 +1,23 @@
+services:
+  demo_04_service_02:
+    build: .
+    ports:
+      - "5002:80"
+    volumes:
+      - .:/code
+    links:
+      - demo_04_service_02_mongodb
+  demo_04_service_02_mongodb:
+    image: mongo:5.0
+    volumes:
+      - demo_04_service_02_mongodb_container:/data/db
+    logging:
+        driver: none
+
+volumes:
+  demo_04_service_02_mongodb_container:
+
+networks:
+  default:
+    name: demo_04
+    external: true

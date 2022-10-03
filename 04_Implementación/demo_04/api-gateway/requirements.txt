@@ -1,0 +1,5 @@
+fastapi==0.78
+uvicorn>=0.18.1
+ariadne>=0.16.1
+requests>=2.28.1
+aiodataloader>=0.2.1

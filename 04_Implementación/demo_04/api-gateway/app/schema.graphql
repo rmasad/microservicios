@@ -1,0 +1,34 @@
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Player {
+    id: ID!
+    name: String!
+    age: Int!
+    number: Int!
+    description: String
+    team: Team
+}
+
+type Team {
+    id: ID!
+    name: String!
+    country: String!
+    description: String
+    players: [Player]
+}
+
+
+
+type Query {
+    listPlayers(team_id: ID): [Player]!
+    getPlayer(id: ID!): Player!
+    getTeam(id: ID!): Team!
+}
+
+type Mutation {
+    createTeam(name: String!, country: String!, description: String): Team!
+}

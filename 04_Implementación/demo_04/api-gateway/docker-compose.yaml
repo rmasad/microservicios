@@ -1,0 +1,12 @@
+services:
+  demo_04_api_gateway:
+    build: .
+    ports:
+      - "5000:80"
+    volumes:
+      - .:/code
+
+networks:
+  default:
+    name: demo_04
+    external: true

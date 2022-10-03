@@ -260,9 +260,8 @@ La nube o PAAS (_platform as a service_) facilita (y en muchos casos viabiliza) 
 
 - [Docker] y [docker-compose] en funcionamiento.
 - APIs en [FastAPI] donde un servicio realiza consulta a otro. Documentación de las APIs en `localhost:$puerto/docs`.
-- El problema del n+1 (solución en la **`Unidad 5`**).
+- El problema del n+1 (solución en la **`Unidad 4`**).
 - Ejemplos de _logging_ en los servicios.
-- Ejemplos de consultas a las dos APIs en [Postman].
 
 ---
 
