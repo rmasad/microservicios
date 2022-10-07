@@ -1,6 +1,4 @@
-import asyncio
 import logging
-import threading
 
 from pymongo import MongoClient
 from bson.errors import InvalidId
@@ -10,14 +8,12 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 
 from .events import Emit
-from .events import Receive
 
 
 app = FastAPI()
 mongodb_client = MongoClient("demo_04_service_01_mongodb", 27017)
 
 emit_events = Emit()
-threading.Thread(target=Receive).start()
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
@@ -43,7 +39,7 @@ async def root():
     return {"Hello": "World"}
 
 
-@app.get("/players")
+@app.get("/players", response_model=list[Player])
 def players_all(team_id: str | None = None):
     filters = {}
 
@@ -71,7 +67,7 @@ def players_update(player_id: str, player: dict):
         mongodb_client.service_01.players.update_one(
             {'_id': player_id}, {"$set": player})
 
-        emit_events.publish(player_id, "update", player.dict())
+        emit_events.send(player_id, "update", player.dict())
 
         return Player(
             **mongodb_client.service_01.players.find_one({"_id": player_id})
@@ -95,7 +91,7 @@ def players_delete(player_id: str):
         {"_id": ObjectId(player_id)}
     )
 
-    emit_events.publish(player_id, "delete", player.dict())
+    emit_events.send(player_id, "delete", player.dict())
 
     return player
 
@@ -112,7 +108,7 @@ def players_create(player: Player):
         )
     )
 
-    emit_events.publish(inserted_id, "create", new_player.dict())
+    emit_events.send(inserted_id, "create", new_player.dict())
 
     logging.info(f"✨ New player created: {new_player}")
 

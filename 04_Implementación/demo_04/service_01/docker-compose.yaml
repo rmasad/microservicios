@@ -7,6 +7,13 @@ services:
       - .:/code
     links:
       - demo_04_service_01_mongodb
+  demo_04_service_events_receiver_01:
+    build: .
+    volumes:
+      - .:/code
+    links:
+      - demo_04_service_01_mongodb
+    command: python3 events.py
   demo_04_service_01_mongodb:
     image: mongo:5.0
     volumes:

@@ -4,7 +4,12 @@ import logging
 
 
 class Emit:
-    def __init__(self):
+    def send(self, id, action, payload):
+        self.connect()
+        self.publish(id, action, payload)
+        self.close()
+
+    def connect(self):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='demo_04_message_broker')
         )
@@ -16,9 +21,6 @@ class Emit:
     def publish(self, id, action, payload):
         routing_key = f"team.{action}.{id}"
         message = json.dumps(payload)
-
-        if not self.channel.is_open:
-            self.__init__()
 
         self.channel.basic_publish(exchange='teams',
                                    routing_key=routing_key,
@@ -51,7 +53,11 @@ class Receive:
     def callback(self, ch, method, properties, body):
         body = json.loads(body)
         logging.info(f"Good by {body['name']} 👋")
-        ch.basic_ack(delivery_tag = method.delivery_tag)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self):
         self.connection.close()
+
+
+if __name__ == '__main__':
+    Receive()
