@@ -25,6 +25,7 @@ class Player(BaseModel):
     age: int
     number: int
     team_id: str | None = None
+    avatar_url: str | None = None
     description: str = ""
 
     def __init__(self, **kargs):
@@ -67,7 +68,7 @@ def players_update(player_id: str, player: dict):
         mongodb_client.service_01.players.update_one(
             {'_id': player_id}, {"$set": player})
 
-        emit_events.send(player_id, "update", player.dict())
+        emit_events.send(player_id, "update", player)
 
         return Player(
             **mongodb_client.service_01.players.find_one({"_id": player_id})

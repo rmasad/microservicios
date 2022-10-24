@@ -6,8 +6,12 @@ from aiodataloader import DataLoader
 
 class TeamLoader(DataLoader):
     async def batch_load_fn(self, keys):
-        response = requests.get(f"http://demo_04_service_02/teams",
+        try:
+            response = requests.get(f"http://demo_04_service_02/teams",
                                 params={"id[]": keys})
+        
+        except:
+            return [None for _ in keys]
         
         result = {team['id']: team for team in response.json()}
 

@@ -439,6 +439,8 @@ Implementa el microservicio asignado para el trabajo final. Para esto debes impl
 
 Sube el trabajo al GitLab asignado.
 
+Se recomienda utilizar [FastAPI] y leer su la documentación ([[1]](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/#summary-and-description), [[2]](https://fastapi.tiangolo.com/tutorial/schema-extra-example/) y [[3]](https://fastapi.tiangolo.com/tutorial/handling-errors/)).
+
 ---
 
 ## 📚 Material complementario

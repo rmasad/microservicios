@@ -1,5 +1,6 @@
 from enum import Enum
 
+import time
 import logging
 import threading
 from pymongo import MongoClient
@@ -85,13 +86,16 @@ def teams_delete(team_id: str):
 
     mongodb_client.service_02.teams.delete_one({"_id": ObjectId(team_id)})
 
-    emit_events.publish(team_id, "delete", team.dict())
+    emit_events.send(team_id, "delete", team.dict())
 
     return team
 
 
 @app.post("/teams")
 def teams_create(team: Team):
+    # Make it slow
+    time.sleep(3)
+
     inserted_id = mongodb_client.service_02.teams.insert_one(
         team.dict()
     ).inserted_id
@@ -103,6 +107,6 @@ def teams_create(team: Team):
     )
 
     logging.info(f"✨ New team created: {new_team}")
-    emit_events.publish(inserted_id, "create", new_team.dict())
+    emit_events.send(inserted_id, "create", new_team.dict())
 
     return new_team

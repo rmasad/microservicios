@@ -143,11 +143,12 @@ Veremos más sobre esto en la **`Unidad 2`** y la **`Unidad 6`**.
 
 ---
 <!-- _class: default -->
+![h:500](./assets/bms2_0103.png)
 
+---
 
-![h:500](./assets/team-structure-microservices.png)
-
-Fuente: "[Notes: Microservices by Martin Fowler](https://www.javacodegeeks.com/2015/01/notes-microservices-by-martin-fowler.html)".
+<!-- _class: default -->
+![h:500](./assets/bms2_0104.png)
 
 ---
 

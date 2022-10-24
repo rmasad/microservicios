@@ -10,6 +10,7 @@ type Player {
     age: Int!
     number: Int!
     description: String
+    avatar_url: String
     team: Team
 }
 
@@ -25,6 +26,7 @@ type Team {
 
 type Query {
     listPlayers(team_id: ID): [Player]!
+    listTeams: [Team]!
     getPlayer(id: ID!): Player!
     getTeam(id: ID!): Team!
 }

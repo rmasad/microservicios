@@ -1,3 +1,4 @@
+import time
 import logging
 import requests
 
@@ -10,6 +11,8 @@ from ariadne import load_schema_from_path
 from ariadne.asgi import GraphQL
 
 from graphql.type import GraphQLResolveInfo
+
+from starlette.middleware.cors import CORSMiddleware
 
 from .dataloaders import TeamLoader
 
@@ -38,6 +41,9 @@ def resolve_get_player(obj, resolve_info: GraphQLResolveInfo, id):
 @team.field("players")
 @query.field("listPlayers")
 def resolve_list_players(obj, resolve_info: GraphQLResolveInfo, team_id=None):
+    # Make it slow
+    time.sleep(3)
+
     if obj and not team_id:
         team_id = obj.get('id')
 
@@ -50,6 +56,12 @@ def resolve_list_players(obj, resolve_info: GraphQLResolveInfo, team_id=None):
     if response.status_code == 200:
         return response.json()
 
+@query.field("listTeams")
+def resolve_list_players(obj, resolve_info: GraphQLResolveInfo):
+    response = requests.get(f"http://demo_04_service_02/teams")
+
+    if response.status_code == 200:
+        return response.json()
 
 @player.field("team")
 @query.field("getTeam")
@@ -81,4 +93,4 @@ def resolve_create_team(obj, resolve_info: GraphQLResolveInfo, name, country, de
 
 
 schema = make_executable_schema(type_defs, query, mutation, player, team)
-app = GraphQL(schema, debug=True)
+app = CORSMiddleware(GraphQL(schema, debug=True), allow_origins=['*'], allow_methods=("GET", "POST", "OPTIONS"))
