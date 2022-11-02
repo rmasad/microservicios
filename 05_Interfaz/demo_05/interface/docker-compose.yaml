@@ -1,0 +1,12 @@
+services:
+  demo_05_interface:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/code
+
+networks:
+  default:
+    name: demo_05
+    external: true

@@ -5,8 +5,6 @@ import {
   Heading,
   Text,
   Stack,
-  Image,
-  Divider,
   Icon,
 } from '@chakra-ui/react';
 

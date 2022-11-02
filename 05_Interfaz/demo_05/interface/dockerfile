@@ -1,0 +1,11 @@
+FROM node:alpine
+
+WORKDIR /code
+
+COPY ./app/ ./
+
+RUN ls
+
+RUN npm i
+
+CMD ["npm", "run", "start"]

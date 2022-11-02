@@ -4,20 +4,18 @@ import {
   FormControl,
   FormLabel,
   Input,
-  InputGroup,
   HStack,
   useToast,
   Stack,
   Button,
   Heading,
-  Text,
   useColorModeValue,
   Select,
   Textarea,
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Layout } from '../layout/Layout';
 import { useMutation } from '@apollo/client';
@@ -25,7 +23,7 @@ import { useMutation } from '@apollo/client';
 import { CREATE_TEAM } from '../api/teams';
 
 export default function NewTeam() {
-  const [createTeam, { mutation_data, loading, error }] =
+  const [createTeam, { loading }] =
     useMutation(CREATE_TEAM);
 
   const toast = useToast();
