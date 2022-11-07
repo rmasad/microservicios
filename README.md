@@ -17,8 +17,8 @@ Ustedes aprenderán a... diseñar e implementar un sistema en una arquitectura d
 - [Unidad 2: Estrategias de división de servicios](./02_Modelamiento/)
 - [Unidad 3: Comunicación entre servicios](./03_Comunicación/)
 - [Unidad 4: Implementación](./04_Implementación/)
-- Unidad 5: Interfaz
-- Unidad 6: Despliegue (deployment)
+- [Unidad 5: Interfaz](./05_Interfaz/)
+- [Unidad 6: Despliegue (deployment)](./06_Despliegue/)
 - Unidad 7: Control de Calidad
 - Unidad 8: Seguridad, resiliencia y escalabilidad
 - Unidad 9: Arquitectura evolutiva

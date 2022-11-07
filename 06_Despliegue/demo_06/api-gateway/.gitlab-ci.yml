@@ -1,0 +1,35 @@
+stages:
+- build
+- deploy
+
+docker-build:
+  image: docker:latest
+  stage: build
+  only:
+    - main
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /(\[skip-build\])/
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$(cat ./VERSION) .
+    - docker push $CI_REGISTRY_IMAGE:$(cat ./VERSION)
+  after_script:
+    - "docker logout $CI_REGISTRY"
+  tags:
+    - docker
+
+deploy:
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  stage: deploy
+  only:
+    - main
+  script:
+    - kubectl --kubeconfig $KUBECONFIG apply -f kube.yaml --namespace=microservices
+  tags:
+    - docker

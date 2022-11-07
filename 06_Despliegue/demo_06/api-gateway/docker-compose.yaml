@@ -1,0 +1,12 @@
+services:
+  mcsvcs_api_gateway:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+
+networks:
+  default:
+    name: mcsvcs
+    external: true
