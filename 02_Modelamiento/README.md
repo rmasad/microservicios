@@ -354,6 +354,7 @@ Esto permite que otro servicio pueda acceder a los datos de diversos servicios.
 - A Handbook of Software and Systems Engineering, Albert Endres and Dieter Rombach (2003).
 - Domain-Driven Design: Tackling Complexity in the Heart of Software, Eric Evans (2003). 
 - StranglerFigApplication, Martin Fowler (2004). https://martinfowler.com/bliki/StranglerFigApplication.html
+---
 - Feature Toggles (aka Feature Flags), Martin Fowler (2017). https://www.martinfowler.com/articles/feature-toggles.html
 - Sam Newman, Monolith to Microservices (2019), O’Reilly. 
 
