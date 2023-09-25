@@ -435,9 +435,9 @@ Existen dos formas de implementar una _Saga_:
 
 # 📝 Tarea
 
-Implementa el microservicio asignado para el trabajo final. Para esto debes implementar las operaciones como una API REST y emitir eventos por cada transacción. Debe incluir documentación, esquemas, versionamiento y manejo de errores.
+Implementa el microservicio asignado para el trabajo final. Para esto debes implementar las operaciones como una API REST y emitir eventos por cada transacción. Debe incluir documentación, esquemas, versionamiento y manejo de errores. Debe correrse su sistema mediante Docker/docker-compose.
 
-Sube el trabajo al GitLab asignado.
+Sube a un repositorio público el código.
 
 Se recomienda utilizar [FastAPI] y leer su la documentación ([[1]](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/#summary-and-description), [[2]](https://fastapi.tiangolo.com/tutorial/schema-extra-example/) y [[3]](https://fastapi.tiangolo.com/tutorial/handling-errors/)).
 

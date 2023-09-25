@@ -1,5 +1,6 @@
 import logging
 
+from time import sleep
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from fastapi import FastAPI
@@ -33,7 +34,10 @@ async def root():
 
 @app.get("/players")
 def players_all(team_id: str | None = None):
+    logging.info(f"Getting all players (team_id: {team_id})")
     filters = {}
+
+    sleep(3)
 
     if team_id:
         filters["team_id"] = team_id

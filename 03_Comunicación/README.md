@@ -7,7 +7,7 @@ marp: true
 <!-- paginate: true -->
 <!-- footer: Microservicios por Rafik Mas'ad Nasra -->
 <!-- author: Rafik Mas'ad Nasra -->
-<!-- title: Introducción a microservicios -->
+<!-- title: Comunicación entre servicios -->
 <!-- size: 16:9 -->
 
 <style>    
