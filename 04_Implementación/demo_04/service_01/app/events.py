@@ -2,6 +2,8 @@ import json
 import pika
 import logging
 
+logging.getLogger("pika").setLevel(logging.ERROR)
+
 
 class Emit:
     def send(self, id, action, payload):
@@ -32,6 +34,7 @@ class Emit:
 
 class Receive:
     def __init__(self):
+        logging.info("Waiting for messages...")
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='demo_04_message_broker')
         )
@@ -53,11 +56,13 @@ class Receive:
     def callback(self, ch, method, properties, body):
         body = json.loads(body)
         logging.info(f"Good by {body['name']} 👋")
-        ch.basic_ack(delivery_tag = method.delivery_tag)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self):
         self.connection.close()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
     Receive()

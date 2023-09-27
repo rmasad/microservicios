@@ -2,7 +2,6 @@ from enum import Enum
 
 import time
 import logging
-import threading
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -10,14 +9,11 @@ from fastapi import FastAPI, Query
 from pydantic import BaseModel
 
 from .events import Emit
-from .events import Receive
-
 
 app = FastAPI()
 mongodb_client = MongoClient("demo_04_service_02_mongodb", 27017)
 
 emit_events = Emit()
-threading.Thread(target=Receive).start()
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')

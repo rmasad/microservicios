@@ -13,7 +13,7 @@ services:
       - .:/code
     links:
       - demo_04_service_01_mongodb
-    command: python3 events.py
+    command: python3 app/events.py
   demo_04_service_01_mongodb:
     image: mongo:5.0
     volumes:
