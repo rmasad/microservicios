@@ -124,16 +124,15 @@ La principal distinción entre un BFF y un Gateway de agregación central es que
 
 # 📝 Tarea
 
-Implementa la interfaz del microservicio asignado para el trabajo final. Para esto debes implementar en el servicio de *API Gateway* la conexión con el servicio y en la interfaz las funcionalidades obteniendo y modificando los datos desde *API Gateway*.
+Implementa una interfaz de usuario (web o mobil) para el sistema a desarrollar en este trabajo utilizando los microservicios del resto de los equipos. Para esto debes implementar en el servicio de *API Gateway* la conexión con los servicios y en la interfaz las funcionalidades obteniendo y modificando los datos desde API Gateway.
 
 ---
 
 <!-- _class: default -->
 
-La _network_ en _docker-compose_ se va a llamar 'microsvcs'.
+La network en _docker-compose_ se va a llamar 'microsvcs'.
 
-Para evitar choque entre equipos, desarrolle el código de el _API Gateway_ y la interfaz en una rama con el nombre del servicio.
-
+Incluye un video con una demostración de todas las funcionalidades implementadas. Sube el código a repositorios públicos.
 
 ---
 
