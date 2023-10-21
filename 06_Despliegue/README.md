@@ -380,7 +380,7 @@ Los **Services** pueden ser:
 
 # 📝 Tarea
 
-Sube tu microservicio al cluster Kubernetes mediante Integración Continua. Los cambios realizados al agregador y la interfaz se van a subir en clases en turnos.
+Sube tu microservicio al cluster Kubernetes, idealmente mediante Integración Continua. Los cambios realizados al agregador y la interfaz se van a subir en clases en turnos.
 
 ---
 
