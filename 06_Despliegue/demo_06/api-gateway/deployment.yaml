@@ -26,13 +26,9 @@ spec:
     spec:
       containers:
         - name: api-gateway-container
-          image: registry.gitlab.com/inf326-2022-2/api-gateway:1.0.1
+          image: ghcr.io/rmasad/microservicios:main
 
           ports:
             - containerPort: 5000
-
-      restartPolicy: Always
-      imagePullSecrets:
-        - name: gitlab-registry
 
 ---
