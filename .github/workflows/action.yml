@@ -10,6 +10,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -49,13 +50,9 @@ jobs:
   deploy:
     name: Deploy
     needs: [ build-and-push-image ]
-    runs-on: ubuntu-latest
+    runs-on: bitnami/kubectl:latest
     steps:
-      - uses: actions/checkout@v2
-
+      
       - name: Trigger deploy
-        uses: Consensys/kubernetes-action@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-        with:
-          args: apply ./06_Despliegue/demo_06/api-gateway/deployment.yaml
+        uses: actions/checkout@v4
+      - run: kubectl apply -f ./06_Despliegue/demo_06/api-gateway/deployment.yaml --namespace=microservices
