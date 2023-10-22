@@ -32,3 +32,42 @@ spec:
             - containerPort: 5000
 
 ---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-issuer
+spec:
+  acme:
+    email: rafik.masad@usm.cl
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-issuer-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: letsencrypt-issuer
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+spec:
+  tls:
+  - hosts:
+    - demo.inf326.nursoft.dev
+    secretName: letsencrypt
+  rules:
+    - host: demo.inf326.nursoft.dev
+      http: &demo_rules
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  api-gateway-service
+                port:
+                  number: 5000
