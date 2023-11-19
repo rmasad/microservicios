@@ -20,7 +20,7 @@ Ustedes aprenderán a... diseñar e implementar un sistema en una arquitectura d
 - [Unidad 5: Interfaz](./05_Interfaz/)
 - [Unidad 6: Despliegue (deployment)](./06_Despliegue/)
 - [Unidad 7: Control de Calidad](./07_QA/)
-- Unidad 8: Seguridad, resiliencia y escalabilidad
+- [Unidad 8: Seguridad, resiliencia y escalabilidad](./08_NFR/)
 - Unidad 9: Arquitectura evolutiva
 
 ## 🔧 Para esto tendrán a disposición...
