@@ -1,6 +1,10 @@
 {
     "workbench.colorTheme": "Visual Studio Dark",
     "cSpell.enableFiletypes": [
+        "!yaml",
         "markdown"
+    ],
+    "cSpell.words": [
+        "recurrentemente"
     ]
 }

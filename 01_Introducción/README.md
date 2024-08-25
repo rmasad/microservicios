@@ -46,8 +46,8 @@ marp: true
     Unidad 2: Estrategias de división de servicios
     Unidad 3: Comunicación entre servicios
     Unidad 4: Implementación
-    Unidad 5: Interfaz
-    Unidad 6: Despliegue (deployment)
+    Unidad 5: Despliegue (deployment)
+    Unidad 6: Interfaz
     Unidad 7: Control de Calidad
     Unidad 8: Seguridad, resiliencia y escalabilidad
     Unidad 9: Arquitectura evolutiva

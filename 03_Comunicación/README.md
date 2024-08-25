@@ -318,7 +318,13 @@ Este patrón se utiliza cuando un microservicio pone datos en una ubicación def
 
 # 📝 Tarea
 
-Realiza una presentación simple de tu propuesta de proyecto y su arquitectura. Agrega los mecanismos de comunicación entre servicios a usar y cuales son las conexiones entre los dominios/servicios.
+Realicen una presentación de proyecto técnico descrito en clases. Debe incluir:
+
+- Descripción del problema, contexto de negocio
+- Lenguaje ubicuo del proyecto
+- Diagrama de arquitectura
+- Listado preliminar de puntos de comunicación con su respectivo patrón arquitectónico 
+- Comunicación entre servicios
 
 ---
 
