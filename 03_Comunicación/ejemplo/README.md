@@ -90,6 +90,17 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 
 ---
 
+```mermaid
+    C4Context
+      Boundary(b0, "Modulo de gestión de usuarios") {
+        Container(users, "User")
+      }
+
+      UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="1")
+```
+
+---
+
 ### Requerimientos
 
 
@@ -190,6 +201,23 @@ Envío de mensajes (eventos/event-driven):
 
 </div>
 
+---
+
+```mermaid
+    C4Context
+      Boundary(b1, "Modulo de gestión de cursos") {
+        Container(courses, "Course")
+        Container(schedules, "Schedule")
+        Container(enrollment, "Enrollment")
+      }
+
+      Rel(schedules, courses, "")
+      Rel(enrollment, courses, "")
+      Rel(enrollment, schedules, "")
+
+      Rel(schedules, users, "")
+      Rel(enrollment, users, "")
+```
 
 ---
 
@@ -317,6 +345,23 @@ Mensajes (eventos/event-driven):
 
 ---
 
+```mermaid
+    C4Context
+      Boundary(b2, "Modulo de gestión de calificaciones") {
+        Container(grades, "Grade")
+      }
+
+      Container(users, "User")
+      Container(courses, "Course")
+      Container(schedules, "Schedule")
+
+      Rel(grades, users, "")
+      Rel(grades, courses, "")
+      Rel(grades, schedules, "")
+```
+
+---
+
 ### Requerimientos
 
 - **Registrar una calificación**: El sistema debe permitir registrar una calificación para un estudiante en un curso.
@@ -379,6 +424,23 @@ Mensajes (eventos/event-driven):
       Rel(benefit, debt, "")
 
 </div>
+
+---
+
+```mermaid
+    C4Context
+      Boundary(b3, "Modulo de gestión de aranceles") {
+        Container(debt, "Debt")
+        Container(payment, "Payment")
+        Container(benefit, "Benefit")
+      }
+
+      Rel(debt, users, "")
+      Rel(payment, users, "")
+      Rel(benefit, users, "")
+      Rel(payment, debt, "")
+      Rel(benefit, debt, "")
+```
 
 ---
 
@@ -538,6 +600,48 @@ Mensajes (eventos/event-driven):
       Rel(benefit, debt, "")
 
 </div>
+
+---
+
+```mermaid
+    C4Context
+      Boundary(b0, "Modulo de gestión de usuarios") {
+        Container(users, "User")
+      }
+
+      Boundary(b1, "Modulo de gestión de cursos") {
+        Container(courses, "Course")
+        Container(schedules, "Schedule")
+        Container(enrollment, "Enrollment")
+      }
+
+      Rel(schedules, courses, "")
+      Rel(enrollment, courses, "")
+      Rel(enrollment, schedules, "")
+
+      Rel(schedules, users, "")
+      Rel(enrollment, users, "")
+
+      Boundary(b2, "Modulo de gestión de calificaciones") {
+        Container(grades, "Grade")
+      }
+
+      Rel(grades, users, "")
+      Rel(grades, courses, "")
+      Rel(grades, schedules, "")
+
+      Boundary(b3, "Modulo de gestión de aranceles") {
+        Container(debt, "Debt")
+        Container(payment, "Payment")
+        Container(benefit, "Benefit")
+      }
+
+      Rel(debt, users, "")
+      Rel(payment, users, "")
+      Rel(benefit, users, "")
+      Rel(payment, debt, "")
+      Rel(benefit, debt, "")
+```
 
 ---
 
