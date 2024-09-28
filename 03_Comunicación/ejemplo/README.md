@@ -513,7 +513,7 @@ Mensajes (eventos/event-driven):
 
 <!-- _class: default -->
 
-![Diagrama de arquitectura general](./assets/_general.svg)
+![Diagrama de arquitectura general](./assets/general.svg)
 
 ---
 
