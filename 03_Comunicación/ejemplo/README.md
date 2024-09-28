@@ -211,6 +211,8 @@ Envío de mensajes (eventos/event-driven):
         Container(enrollment, "Enrollment")
       }
 
+      Container(users, "User")
+
       Rel(schedules, courses, "")
       Rel(enrollment, courses, "")
       Rel(enrollment, schedules, "")
@@ -434,6 +436,8 @@ Mensajes (eventos/event-driven):
         Container(payment, "Payment")
         Container(benefit, "Benefit")
       }
+
+      Container(users, "User")
 
       Rel(debt, users, "")
       Rel(payment, users, "")
