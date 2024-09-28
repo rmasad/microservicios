@@ -16,17 +16,6 @@ marp: true
     section.invert h4 { text-align: left; }
 </style>
 
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
-</script>
-
-
-<style>    
-    ul { margin: 0; }
-    section.invert p { text-align: left; }
-</style>
-
 # Ejemplo de proyecto técnico
 ## Sistemas de Gestión Académica Universitario
 
@@ -79,14 +68,10 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 
 ### Diagrama de arquitectura
 
-<div class="mermaid">
-    C4Context
-      Boundary(b0, "Modulo de gestión de usuarios") {
-        Container(users, "User")
-      }
+---
 
-      UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="1")
-</div>
+<!-- _class: default -->
+![Modulo de gestión de usuarios](./assets/users.svg)
 
 ---
 
@@ -107,25 +92,26 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 - **Autentificar un usuario**: El sistema debe permitir autentificar un usuario con su correo y contraseña.
 - **Autorizar un usuario**: El sistema debe permitir autorizar un usuario para acceder a los recursos del sistema o devolver un error si no tiene permisos.
 - **Recuperar contraseña**: El sistema debe permitir recuperar la contraseña de un usuario.
-- **Cambiar contraseña**: El sistema debe permitir cambiar la contraseña de un usuario.
 ---
+- **Cambiar contraseña**: El sistema debe permitir cambiar la contraseña de un usuario.
 - **Registrar un nuevo profesor**: El sistema debe permitir registrar un nuevo profesor con su información personal y académica.
 - **Actualizar información de un profesor**: El sistema debe permitir actualizar la información de un profesor.
-- **Eliminar un profesor**: El sistema debe permitir eliminar un profesor. Esta acción debe ser reversible.
 ---
+- **Eliminar un profesor**: El sistema debe permitir eliminar un profesor. Esta acción debe ser reversible.
 - **Consultar información de un profesor**: El sistema debe permitir consultar la información de un profesor.
 - **Listar todos los profesores**: El sistema debe permitir listar todos los profesores registrados. Con paginación y filtros.
-- **Registrar un nuevo estudiante**: El sistema debe permitir registrar un nuevo estudiante con su información personal y académica.
 ---
+- **Registrar un nuevo estudiante**: El sistema debe permitir registrar un nuevo estudiante con su información personal y académica.
 - **Actualizar información de un estudiante**: El sistema debe permitir actualizar la información de un estudiante.
 - **Eliminar un estudiante**: El sistema debe permitir eliminar un estudiante. Esta acción debe ser reversible.
-- **Consultar información de un estudiante**: El sistema debe permitir consultar la información de un estudiante.
 ---
+- **Consultar información de un estudiante**: El sistema debe permitir consultar la información de un estudiante.
 - **Listar todos los estudiantes**: El sistema debe permitir listar todos los estudiantes registrados. Con paginación y filtros.
 - **Registrar un nuevo administrativo**: El sistema debe permitir registrar un nuevo administrativo con su información personal y laboral.
-- **Actualizar información de un administrativo**: El sistema debe permitir actualizar la información de un administrativo.
 ---
+- **Actualizar información de un administrativo**: El sistema debe permitir actualizar la información de un administrativo.
 - **Eliminar un administrativo**: El sistema debe permitir eliminar un administrativo. Esta acción debe ser reversible.
+---
 - **Consultar información de un administrativo**: El sistema debe permitir consultar la información de un administrativo.
 - **Listar todos los administrativos**: El sistema debe permitir listar todos los administrativos registrados. Con paginación y filtros.
 
@@ -182,24 +168,10 @@ Envío de mensajes (eventos/event-driven):
 
 ### Diagrama de arquitectura
 
-<div class="mermaid">
-    C4Context
-      Boundary(b1, "Modulo de gestión de cursos") {
-        Container(courses, "Course")
-        Container(schedules, "Schedule")
-        Container(enrollment, "Enrollment")
-      }
+---
 
-      Container(users, "User")
-
-      Rel(schedules, courses, "")
-      Rel(enrollment, courses, "")
-      Rel(enrollment, schedules, "")
-
-      Rel(schedules, users, "")
-      Rel(enrollment, users, "")
-
-</div>
+<!-- _class: default -->
+![Modulo de gestión de cursos](./assets/courses.svg)
 
 ---
 
@@ -330,20 +302,8 @@ Mensajes (eventos/event-driven):
 ### Diagrama de arquitectura
 ---
 
-<div class="mermaid">
-    C4Context
-      Boundary(b2, "Modulo de gestión de calificaciones") {
-        Container(grades, "Grade")
-      }
-
-      Container(users, "User")
-      Container(courses, "Course")
-      Container(schedules, "Schedule")
-
-      Rel(grades, users, "")
-      Rel(grades, courses, "")
-      Rel(grades, schedules, "")
-</div>
+<!-- _class: default -->
+![Modulo de gestión de calificaciones](./assets/grades.svg)
 
 ---
 
@@ -409,23 +369,10 @@ Mensajes (eventos/event-driven):
 
 ### Diagrama de arquitectura
 
-<div class="mermaid">
-    C4Context
-      Boundary(b3, "Modulo de gestión de aranceles") {
-        Container(debt, "Debt")
-        Container(payment, "Payment")
-        Container(benefit, "Benefit")
-      }
+---
 
-      Container(users, "User")
-
-      Rel(debt, users, "")
-      Rel(payment, users, "")
-      Rel(benefit, users, "")
-      Rel(payment, debt, "")
-      Rel(benefit, debt, "")
-
-</div>
+<!-- _class: default -->
+![Modulo de gestión de aranceles](./assets/payment.svg)
 
 ---
 
@@ -564,46 +511,9 @@ Mensajes (eventos/event-driven):
 
 ---
 
-<div class="mermaid">
-    C4Context
-      Boundary(b0, "Modulo de gestión de usuarios") {
-        Container(users, "User")
-      }
+<!-- _class: default -->
 
-      Boundary(b1, "Modulo de gestión de cursos") {
-        Container(courses, "Course")
-        Container(schedules, "Schedule")
-        Container(enrollment, "Enrollment")
-      }
-
-      Rel(schedules, courses, "")
-      Rel(enrollment, courses, "")
-      Rel(enrollment, schedules, "")
-
-      Rel(schedules, users, "")
-      Rel(enrollment, users, "")
-
-      Boundary(b2, "Modulo de gestión de calificaciones") {
-        Container(grades, "Grade")
-      }
-
-      Rel(grades, users, "")
-      Rel(grades, courses, "")
-      Rel(grades, schedules, "")
-
-      Boundary(b3, "Modulo de gestión de aranceles") {
-        Container(debt, "Debt")
-        Container(payment, "Payment")
-        Container(benefit, "Benefit")
-      }
-
-      Rel(debt, users, "")
-      Rel(payment, users, "")
-      Rel(benefit, users, "")
-      Rel(payment, debt, "")
-      Rel(benefit, debt, "")
-
-</div>
+![Diagrama de arquitectura general](./assets/_general.svg)
 
 ---
 
@@ -650,3 +560,11 @@ Mensajes (eventos/event-driven):
 ---
 
 # 👏
+
+<div class="mermaid">
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+</div>
