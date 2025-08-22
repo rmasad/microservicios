@@ -8,5 +8,5 @@ services:
 
 networks:
   default:
-    name: demo_05
+    name: demo_04
     external: true
