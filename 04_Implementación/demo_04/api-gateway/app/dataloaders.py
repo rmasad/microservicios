@@ -1,5 +1,6 @@
 import logging
-import requests
+
+import httpx
 
 from aiodataloader import DataLoader
 
@@ -7,13 +8,16 @@ from aiodataloader import DataLoader
 class TeamLoader(DataLoader):
     async def batch_load_fn(self, keys):
         try:
-            response = requests.get(f"http://demo_04_service_02/teams",
-                                params={"id[]": keys})
-        
-        except:
+            async with httpx.AsyncClient() as client:
+                response = await client.get("http://demo_04_service_02/teams",
+                                            params={"id": keys})
+                response.raise_for_status()
+
+        except httpx.HTTPError:
+            logging.exception("No se pudo obtener los teams %s", keys)
             return [None for _ in keys]
-        
+
         result = {team['id']: team for team in response.json()}
 
-        # Here we call a function to return a user for each key in keys in order
-        return [result[key] for key in keys]
+        # Se retorna un team por cada key, en el mismo orden
+        return [result.get(key) for key in keys]

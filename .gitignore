@@ -1,5 +1,7 @@
-__pycache__
-node_modules
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
 README.html
 README.pdf
 _*

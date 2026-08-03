@@ -17,16 +17,37 @@ import {
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../layout/Layout';
 import { useMutation } from '@apollo/client';
 
-import { CREATE_TEAM } from '../api/teams';
+import { CREATE_TEAM, LIST_TEAMS } from '../api/teams';
 
 export default function NewTeam() {
-  const [createTeam, { loading }] =
-    useMutation(CREATE_TEAM);
-
   const toast = useToast();
+  const navigate = useNavigate();
+
+  const [createTeam, { loading }] = useMutation(CREATE_TEAM, {
+    refetchQueries: [{ query: LIST_TEAMS }],
+    onCompleted: () => {
+      toast({
+        title: 'Equipo creado',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/teams');
+    },
+    onError: error => {
+      toast({
+        title: 'Error al crear el equipo',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
 
   const {
     handleSubmit,
@@ -41,13 +62,6 @@ export default function NewTeam() {
         country: data.country,
         description: data.description,
       },
-    });
-
-    toast({
-      title: 'Submitted',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
     });
   };
 
@@ -70,9 +84,15 @@ export default function NewTeam() {
               <Stack spacing={4}>
                 <HStack>
                   <Box>
-                    <FormControl htmlFor="name" isRequired>
+                    <FormControl htmlFor="name" isRequired isInvalid={errors.name}>
                       <FormLabel>Nombre</FormLabel>
-                      <Input id="name" type="text" {...register('name')} />
+                      <Input
+                        id="name"
+                        type="text"
+                        {...register('name', {
+                          required: 'El nombre es obligatorio',
+                        })}
+                      />
                       <FormErrorMessage>
                         {errors.name && errors.name.message}
                       </FormErrorMessage>
@@ -100,7 +120,7 @@ export default function NewTeam() {
                   <FormLabel>Descripción</FormLabel>
                   <Textarea {...register('description')} />
                   <FormErrorMessage>
-                    {errors.Descripción && errors.Descripción.message}
+                    {errors.description && errors.description.message}
                   </FormErrorMessage>
                 </FormControl>
                 <Stack spacing={10} pt={2}>

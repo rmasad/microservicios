@@ -6,6 +6,9 @@ from bson.objectid import ObjectId
 from fastapi import FastAPI
 from fastapi import HTTPException
 from pydantic import BaseModel
+from pydantic import ConfigDict
+from pydantic import Field
+from pydantic import field_validator
 
 from .events import Emit
 
@@ -20,7 +23,9 @@ logging.basicConfig(level=logging.INFO,
 
 
 class Player(BaseModel):
-    id: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    id: str | None = Field(default=None, alias="_id")
     name: str
     age: int
     number: int
@@ -28,10 +33,19 @@ class Player(BaseModel):
     avatar_url: str | None = None
     description: str = ""
 
-    def __init__(self, **kargs):
-        if "_id" in kargs:
-            kargs["id"] = str(kargs["_id"])
-        BaseModel.__init__(self, **kargs)
+    @field_validator("id", mode="before")
+    @classmethod
+    def objectid_to_str(cls, value):
+        return str(value) if value is not None else None
+
+
+class PlayerUpdate(BaseModel):
+    name: str | None = None
+    age: int | None = None
+    number: int | None = None
+    team_id: str | None = None
+    avatar_url: str | None = None
+    description: str | None = None
 
 
 @app.get("/")
@@ -62,13 +76,15 @@ def players_get(player_id: str):
 
 
 @app.put("/players/{player_id}")
-def players_update(player_id: str, player: dict):
+def players_update(player_id: str, player: PlayerUpdate):
+    changes = player.model_dump(exclude_unset=True)
+
     try:
         player_id = ObjectId(player_id)
         mongodb_client.service_01.players.update_one(
-            {'_id': player_id}, {"$set": player})
+            {'_id': player_id}, {"$set": changes})
 
-        emit_events.send(player_id, "update", player)
+        emit_events.send(player_id, "update", changes)
 
         return Player(
             **mongodb_client.service_01.players.find_one({"_id": player_id})
@@ -92,7 +108,7 @@ def players_delete(player_id: str):
         {"_id": ObjectId(player_id)}
     )
 
-    emit_events.send(player_id, "delete", player.dict())
+    emit_events.send(player_id, "delete", player.model_dump())
 
     return player
 
@@ -100,7 +116,7 @@ def players_delete(player_id: str):
 @app.post("/players")
 def players_create(player: Player):
     inserted_id = mongodb_client.service_01.players.insert_one(
-        player.dict()
+        player.model_dump(exclude={"id"})
     ).inserted_id
 
     new_player = Player(
@@ -109,7 +125,7 @@ def players_create(player: Player):
         )
     )
 
-    emit_events.send(inserted_id, "create", new_player.dict())
+    emit_events.send(inserted_id, "create", new_player.model_dump())
 
     logging.info(f"✨ New player created: {new_player}")
 

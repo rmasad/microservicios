@@ -16,6 +16,7 @@ kind: Deployment
 metadata:
   name: api-gateway-deployment
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: api-gateway-app
@@ -26,10 +27,32 @@ spec:
     spec:
       containers:
         - name: api-gateway-container
-          image: ghcr.io/rmasad/microservicios:main
+          image: registry.gitlab.com/inf326-2022-2/api-gateway:1.0.1
 
           ports:
             - containerPort: 5000
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 apiVersion: cert-manager.io/v1
@@ -52,22 +75,42 @@ kind: Ingress
 metadata:
   name: microservices-ingress
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/issuer: letsencrypt-issuer
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
-    - demo.inf326.nursoft.dev
+    - demo.inf326.nur.dev
     secretName: letsencrypt
   rules:
-    - host: demo.inf326.nursoft.dev
-      http: &demo_rules
+    - host: demo.inf326.nur.dev
+      http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name:  api-gateway-service
+                name: api-gateway-service
                 port:
                   number: 5000
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-gateway-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-gateway-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

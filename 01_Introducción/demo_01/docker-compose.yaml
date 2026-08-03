@@ -1,0 +1,43 @@
+services:
+  demo_01_service_01:
+    build: ./service_01
+    ports:
+      - "5000:80"
+    volumes:
+      - ./service_01:/code
+    depends_on:
+      - demo_01_service_01_mongodb
+
+  demo_01_service_01_mongodb:
+    image: mongo:8.2
+    attach: false
+    volumes:
+      - demo_01_service_01_mongodb_container:/data/db
+    logging:
+      driver: none
+
+  demo_01_service_02:
+    build: ./service_02
+    ports:
+      - "5001:80"
+    volumes:
+      - ./service_02:/code
+    depends_on:
+      - demo_01_service_02_mongodb
+      - demo_01_service_01
+
+  demo_01_service_02_mongodb:
+    image: mongo:8.2
+    attach: false
+    volumes:
+      - demo_01_service_02_mongodb_container:/data/db
+    logging:
+      driver: none
+
+volumes:
+  demo_01_service_01_mongodb_container:
+  demo_01_service_02_mongodb_container:
+
+networks:
+  default:
+    name: demo_01

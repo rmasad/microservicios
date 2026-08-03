@@ -7,7 +7,7 @@ marp: true
 <!-- paginate: true -->
 <!-- footer: Microservicios por Rafik Mas'ad Nasra -->
 <!-- author: Rafik Mas'ad Nasra -->
-<!-- title: Introducción a microservicios -->
+<!-- title: Despliegue (deployment) -->
 <!-- size: 16:9 -->
 
 <style>    
@@ -37,15 +37,15 @@ Modelo de arquitectura 4+1 de Kruchten.
 
 ##  🧰 De la lógica a la física
 
-Una vista lógica de una arquitectura generalmente abstrae las preocupaciones de implementación física subyacente. En este capitulo nos vamos a preocupar también de la vista física de la arquitectura.
+Una vista lógica de una arquitectura generalmente abstrae las preocupaciones de implementación física subyacente. En este capítulo nos vamos a preocupar también de la vista física de la arquitectura.
 
 ---
 
-### 🧬 Multiples instancias
+### 🧬 Múltiples instancias
 
 La topología de implementación (vista física) de dos microservicios no es directa.
 
-Tener multiples instancias permite balancear la carga y mejorar la robustez (si falla una instancia, hay otra que puede recibir las consultas).
+Tener múltiples instancias permite balancear la carga y mejorar la robustez (si falla una instancia, hay otra que puede recibir las consultas).
 
 Para conexiones HTTP, un balanceador de carga basta para manejar el enrutamiento de los servicios.
 
@@ -56,7 +56,7 @@ Para conexiones HTTP, un balanceador de carga basta para manejar el enrutamiento
 
 ---
 
-La cantidad de replicas va a depende de la aplicación y el uso. Además, por razones de robustez, hay que preocuparse que no todas las instancias estén en el mismo hardware (servidor o incluso datacenter).
+La cantidad de réplicas va a depender de la aplicación y el uso. Además, por razones de robustez, hay que preocuparse que no todas las instancias estén en el mismo hardware (servidor o incluso datacenter).
 
 ---
 
@@ -65,11 +65,11 @@ La cantidad de replicas va a depende de la aplicación y el uso. Además, por ra
 
 ---
 
-### 🗄️ Replica de la base de datos
+### 🗄️ Réplica de la base de datos
 
 Como queremos que un microservicio oculte su gestión interna. Esto nos lleva a (siempre) repetir "no compartas base de datos".
 
-Distintas replicas de un servicio **pueden** compartir la misma instancia de una base de datos. Al ser el mismo servicio, la lógica de acceso y manipulación de datos, **siguen dentro del mismo servicio-lógico**.
+Distintas réplicas de un servicio **pueden** compartir la misma instancia de una base de datos. Al ser el mismo servicio, la lógica de acceso y manipulación de datos, **siguen dentro del mismo servicio-lógico**.
 
 ---
 
@@ -80,7 +80,7 @@ Distintas replicas de un servicio **pueden** compartir la misma instancia de una
 
 #### 📈 Escalar bases de datos 
 
-Existen diversos patrones de implementación de bases de datos replicadas, como tener replicas *read-only*.
+Existen diversos patrones de implementación de bases de datos replicadas, como tener réplicas *read-only*.
 
 ---
 
@@ -89,7 +89,7 @@ Existen diversos patrones de implementación de bases de datos replicadas, como 
 
 ---
 
-Otra decisión habitual es si insolar o no la base de datos en su propia infraestructura. Aunque estén en la misma infraestructura física, siguen siendo bases de datos lógicas distintas.
+Otra decisión habitual es si aislar o no la base de datos en su propia infraestructura. Aunque estén en la misma infraestructura física, siguen siendo bases de datos lógicas distintas.
 
 ---
 
@@ -124,7 +124,7 @@ Uno puede desplegar la aplicación para realizar desarrollo local, con objetivo 
 
 <!-- _class: default -->
 
-#### Entonces... Un microservicio puede estar en multiples entornos y el número de replicas de cada uno de estos microservicios puede variar en cada entorno dependiendo de las necesidades.
+#### Entonces... Un microservicio puede estar en múltiples entornos y el número de réplicas de cada uno de estos microservicios puede variar en cada entorno dependiendo de las necesidades.
 
 ---
 
@@ -134,9 +134,9 @@ Uno puede desplegar la aplicación para realizar desarrollo local, con objetivo 
 
 ### 🤐 Ejecución aislada 
 
-Cada microservicio debe correr en una maquina (lógica) distinta. Cada servicio puede tener requerimientos distintos (y contradictorios), depender de equipos distintos y/o tener problemas que afecten a la maquina en su conjunto.
+Cada microservicio debe correr en una máquina (lógica) distinta. Cada servicio puede tener requerimientos distintos (y contradictorios), depender de equipos distintos y/o tener problemas que afecten a la máquina en su conjunto.
 
-El aislamiento puede darse en maquinas (fisicas) distintas, maquinas virtuales o contenedores.
+El aislamiento puede darse en máquinas (físicas) distintas, máquinas virtuales o contenedores.
 
 ---
 
@@ -182,19 +182,19 @@ Quita presión importante en la revisión y administración del sistema.
 
 ---
 
-### 🖥️ Maquinas físicas
+### 🖥️ Máquinas físicas
 
-En casos extraordinarios te vas a encontrar desplegando tus microservicios directamente en una maquina física. Sin otra capa de abstracción (contenedores o virtualización).
+En casos extraordinarios te vas a encontrar desplegando tus microservicios directamente en una máquina física. Sin otra capa de abstracción (contenedores o virtualización).
 
 Esto produce sub-utilización de recursos y, habitualmente, mayor complejidad en el despliegue.
 
 ---
 
-### 🦾​ Maquinas virtuales
+### 🦾​ Máquinas virtuales
 
-La virtualización nos permite dividir una maquina física en varias más pequeñas y virtuales. 
+La virtualización nos permite dividir una máquina física en varias más pequeñas y virtuales. 
 
-Tiene un costo importante el modelo de una maquina virtual por servicio. Además, mantienen parte de los problemas de las maquinas físicas en cuanto a la sub-utilización de recursos.
+Tiene un costo importante el modelo de una máquina virtual por servicio. Además, mantienen parte de los problemas de las máquinas físicas en cuanto a la sub-utilización de recursos.
 
 ---
 
@@ -257,7 +257,7 @@ La frase _"serverless"_ no significa que los servidores ya no estén involucrado
 
 Se despliega un servicio (la 'función'), el cual esta inactivo hasta que un evento pasa que gatilla la función. Ese evento puede ser un mensaje en una cola, una llamada HTTP o cualquier otra cosa. El código corre hasta que termina y se apaga.
 
-Pueden ejecutarte multiples funciones en paralelo y solo se te cobra por lo que se usa.
+Pueden ejecutarse múltiples funciones en paralelo y solo se te cobra por lo que se usa.
 
 ---
 
@@ -279,13 +279,13 @@ Además, algunos _runtimes_, les toma tiempo ejecutar una nueva versión, hacien
 
 ## ☸ Kubernetes (k8s)
 
-Nuestros sistemas requieren estar desplegados en multiples maquinas, para lo cual requerimos un sistema de orquestación de contenedores que se preocupe de correr (cuando lo requiramos) nuestros servicios, dejarlos disponibles en la red y manejar sus estados.
+Nuestros sistemas requieren estar desplegados en múltiples máquinas, para lo cual requerimos un sistema de orquestación de contenedores que se preocupe de correr (cuando lo requiramos) nuestros servicios, dejarlos disponibles en la red y manejar sus estados.
 
 Kubernetes es la opción por defecto.
 
 ---
 
-Kubernetes coordina un cluster de alta disponibilidad a traves de computadores que están conectados y trabajan como una única unidad. Esto lo hace automatizando la distribución y organización de los contenedores en la forma más eficiente.
+Kubernetes coordina un cluster de alta disponibilidad a través de computadores que están conectados y trabajan como una única unidad. Esto lo hace automatizando la distribución y organización de los contenedores en la forma más eficiente.
 
 ---
 
@@ -295,7 +295,7 @@ Kubernetes coordina un cluster de alta disponibilidad a traves de computadores q
 
 Un **cluster** tiene dos tipos de recursos:
 - **Sistema de control**: administrar el clúster.
-- **Nodos**: maquinas virtuales o físicas donde se ejecutan los contenedores.
+- **Nodos**: máquinas virtuales o físicas donde se ejecutan los contenedores.
 
 ---
 
@@ -326,6 +326,21 @@ Los **Services** pueden ser:
 - **LoadBalancer**: un balanceador de carga, al cual se asigna una IP externa.
 - **ExternalName**: redirige el contenido del servicio al campo ```externalName```(ej. foo.bar.example.com).
 
+---
+
+### 🌐 Ingress
+
+Un **Ingress** expone servicios HTTP/HTTPS hacia afuera del cluster, con reglas por host y por ruta. No basta con definirlo: necesita un *ingress controller* corriendo en el cluster (nginx es el más usado).
+
+La clase de controlador se declara con ```spec.ingressClassName```.
+
+---
+
+### 🔒 TLS con cert-manager
+
+**cert-manager** obtiene y renueva certificados de forma automática, por ejemplo contra Let's Encrypt.
+
+Se define un ```Issuer``` con los datos de la autoridad certificadora y el Ingress declara en ```spec.tls``` los hosts y el secreto donde queda el certificado. Con eso, HTTPS deja de ser un trámite manual.
 
 ---
 
@@ -338,6 +353,47 @@ Los **Services** pueden ser:
 ### Escalar un servicio (2)
 <!-- _class: default -->
 ![h:550px](./assets/module_05_scaling2.svg)
+
+---
+
+### 📈 HorizontalPodAutoscaler (HPA)
+
+Escalar a mano no es sostenible. El **HPA** ajusta solo la cantidad de réplicas de un Deployment según métricas, típicamente uso de CPU.
+
+Requiere que los contenedores declaren ```resources.requests```: sin eso, k8s no tiene contra qué calcular el porcentaje de uso.
+
+---
+
+<!-- _class: default -->
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-gateway-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-gateway-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+```
+
+---
+
+### 📬 Escalar consumidores de colas
+
+Para *workers* que procesan colas, la CPU es mala señal: la señal correcta es el largo de la cola.
+
+Si las tareas entran más rápido de lo que se procesan, la cola crece sin control (*backpressure*). La respuesta es escalar los consumidores según los mensajes pendientes. Herramientas como **KEDA** permiten a k8s escalar con métricas externas (RabbitMQ, Kafka, etc.).
 
 ---
 
@@ -369,7 +425,7 @@ Los **Services** pueden ser:
 
 ---
 
-## 🧩 Ejemplo: `./demo_06`
+## 🧩 Ejemplo: `./demo_05`
 
 - Un _middleware_ con archivos de configuración para levantarlo en _docker-compose_ y _Kubernetes_.
 - El archivo de configuración de la Integración Continua (```.gitlab-ci.yml```).
@@ -385,5 +441,5 @@ Sube tu microservicio al cluster Kubernetes, idealmente mediante Integración Co
 ---
 
 ## 📚 Material complementario
-- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capitulo 8.
+- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capítulo 8.
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)

@@ -8,7 +8,7 @@ services:
     links:
       - demo_01_service_01_mongodb
   demo_01_service_01_mongodb:
-    image: mongo:5.0
+    image: mongo:8.2
     volumes:
       - demo_01_service_01_mongodb_container:/data/db
     logging:

@@ -8,5 +8,5 @@ services:
 
 networks:
   default:
-    name: demo_04
+    name: microsvcs
     external: true

@@ -7,7 +7,7 @@ marp: true
 <!-- paginate: true -->
 <!-- footer: Microservicios por Rafik Mas'ad Nasra -->
 <!-- author: Rafik Mas'ad Nasra -->
-<!-- title: Introducción a microservicios -->
+<!-- title: Implementación -->
 <!-- size: 16:9 -->
 
 <style>    
@@ -25,7 +25,7 @@ marp: true
 
 ## De la unidad de pasada...
 
-![v:225px](../03_Comunicaci%C3%B3n/assets/bms2_0401.png)
+![h:225px](../03_Comunicaci%C3%B3n/assets/bms2_0401.png)
 
 #### Estilo ⇝ Patrón ⇝ Tecnología
 Ej. Sincrónico con bloqueo ⇝ _request-response_ ⇝ REST
@@ -35,7 +35,7 @@ Ej. Sincrónico con bloqueo ⇝ _request-response_ ⇝ REST
 ## 🤔 Criterios para elegir tecnología
 
 - Facilitar la compatibilidad con versiones anteriores: consumidores que usan versiones antiguas de la API deben seguir funcionando.
-- Interfaz explícita:  se debe exponer claramente sus funcionalidades y que hacen, tanto para los desarrolladores como para quienes la consumen.
+- Interfaz explícita:  se debe exponer claramente sus funcionalidades y qué hacen, tanto para los desarrolladores como para quienes la consumen.
 
 ---
 
@@ -51,7 +51,7 @@ Existen múltiples tecnologías de comunicación entre servicios. Para efectos d
 ---
 ### 📞 _Remote Procedure Calls_ (RPC)
 
-La _Remote Procedure Calls_ (RPC) se refiere a hacer un llamada local y hacer que se ejecute en un servicio remoto. Hay diferentes implementaciones de RPC.
+La _Remote Procedure Calls_ (RPC) se refiere a hacer una llamada local y hacer que se ejecute en un servicio remoto. Hay diferentes implementaciones de RPC.
 
 Por lo general, usar una tecnología RPC incluye un protocolo de serialización.
 
@@ -91,10 +91,35 @@ print(s.add(2,3))  # Returns 5
 
 ---
 
+#### 🧩 Ejemplo de esquema gRPC
+
+```proto
+syntax = "proto3";
+
+service Calculator {
+  rpc Add (AddRequest) returns (AddReply);
+}
+
+message AddRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message AddReply {
+  int32 result = 1;
+}
+```
+
+---
+
+Hoy gRPC es la implementación RPC dominante: el esquema `.proto` define el servicio y los mensajes se serializan en binario con Protocol Buffers.
+
+---
+
 #### 👎 Desventajas de RPC
 
-- Acoplamiento tecnológico: algunas implementaciones de RPC, están fuertemente vinculados a un plataforma o lenguaje específico.
-- Las llamadas locales no son llamadas remotas: la idea central de RPC es ocultar la complejidad de una llamada remota. Sin embargo, puede ser esconderse demasiado.
+- Acoplamiento tecnológico: algunas implementaciones de RPC están fuertemente vinculadas a una plataforma o lenguaje específico.
+- Las llamadas locales no son llamadas remotas: la idea central de RPC es ocultar la complejidad de una llamada remota. Sin embargo, puede esconderse demasiado.
 - Es frágil: a cambios y extensiones en las funciones del servidor. 
 
 ---
@@ -119,14 +144,14 @@ print(s.add(2,3))  # Returns 5
 #### 👎 Desventajas de REST
 
 - Es más difícil de consumir una API REST que una RPC. Hay una tendencia a crear librerías para estas API (lo cual aumenta el acoplamiento).
-- Cuesta encontrar API REST bien documentadas, OpenAPI no es (aun) tan fácil de implementar. Aun así, más propicia a ser bien documentada que RPC.
+- Cuesta encontrar API REST bien documentadas, OpenAPI no es (aún) tan fácil de implementar. Aun así, más propicia a ser bien documentada que RPC.
 - Tienen menor rendimiento que RPC.
 
 ---
 
 ### 🕸️ GraphQL
 
-- Una consulta puede traer (fácilmente) multiples entidades.
+- Una consulta puede traer (fácilmente) múltiples entidades.
 - Es el cliente el que determina los datos que requiere del servidor.
 - Existen dos tipos de consulta, las _query_ (obtener datos) y las _mutations_ (modificar datos).
 
@@ -136,10 +161,9 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 
 #### 👎 Desventajas de GraphQL
 
-- Aunque han habido avances significativos, dependes de que GraphQL este implementado en tu lenguaje.
-- Es fácil realizar consultas poco optimas.
+- Aunque han habido avances significativos, dependes de que GraphQL esté implementado en tu lenguaje.
+- Es fácil realizar consultas poco óptimas.
 - Su forma de realizar consultas, similar a SQL, refuerza la idea (equivocada) que los microservicios son _wrapper_ de bases de datos.
-- Por ser un método de comunicación nuevo, no todas las tecnologías son compatibles.
 
 ---
 
@@ -152,7 +176,7 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 --- 
 
 - Un servicio envía el mensaje al _message brokers_ sin tener conocimiento de que servicios lo recibirán.
-- Existen multiples _message brokers_, por ejemplo [RabbitMQ], [Redis] o [Apache Kafka].
+- Existen múltiples _message brokers_, por ejemplo [RabbitMQ], [Redis] o [Apache Kafka].
 - Nubes como Google Cloud, Amazon y Azure proveen sus propios _message brokers_.
 - Para efectos de este curso, usaremos como _message brokers_ [RabbitMQ].
 
@@ -161,20 +185,20 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 #### 🔔 Tópicos y colas
 
 - Habitualmente los _message brokers_ implementan sistemas de tópicos, colas o ambos.
-- [RabbitMQ] un mensaje es enviado a un tópico (_exchange_), una cola (_queue_) se suscribe a uno o más tópicos.
+- En [RabbitMQ] un mensaje es enviado a un tópico (_exchange_), una cola (_queue_) se suscribe a uno o más tópicos.
 - Los suscriptores (replicas de un microservicio en nuestro caso) toman cada mensaje de la cola y lo procesan.
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0502.png)
+![h:225px](./assets/bms2_0502.png)
 
 ---
 
 #### 🤝 Entrega garantizada
 
 - Los _message brokers_ garantizan que los mensajes son entregados al tópico y a las colas que lo suscriban.
-- Si el servicio receptor esta inaccesible, llegara cuando vuelva a estar disponible.
+- Si el servicio receptor está inaccesible, llegará cuando vuelva a estar disponible.
 - No se garantiza que el resultado del procesamiento del mensaje haya resultado con éxito. Tampoco se garantiza el orden en que se procesan.
 
 ---
@@ -182,21 +206,21 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 ## 🔢 Formatos de serialización
 
 - Alguna de las tecnologías que hemos conversado vienen con formatos de serialización.
-- En el caso que no, se debe elegir entre formatos textuales (como JSON y XML) o binarios (como Base64).
+- En el caso que no, se debe elegir entre formatos textuales (como JSON y XML) o binarios (como Protocol Buffers, Avro o MessagePack).
 
 ---
 
 ## 📝 Esquema
 
-- En este contexto, es que expone y que acepta en cada _end-point_ un microservicio.
+- En este contexto, es qué expone y qué acepta en cada _end-point_ un microservicio.
 - Varias de las tecnologías que hemos revisado requieren definir esquema. Siendo o no requerido, es recomendable.
 - Ayudan a capturar _breaking change_. Hay de dos tipos: estructurales y semánticos. 
 
 
 ---
 
-- Un cambio estructural hace que la forma que se usaba antes el _end-point_ ya no funciona: cambia la cantidad de parámetros requeridos, como se llama o la estructura de lo que devuelve.
-- Un cambio semántico es cuando la forma a la que se accede a un _end-point_ se mantiene pero el comportamiento de este cambia. Esto es más peligroso
+- Un cambio estructural hace que la forma que se usaba antes el _end-point_ ya no funciona: cambia la cantidad de parámetros requeridos, cómo se llama o la estructura de lo que devuelve.
+- Un cambio semántico es cuando la forma a la que se accede a un _end-point_ se mantiene pero el comportamiento de este cambia. Esto es más peligroso.
 
 ---
 
@@ -215,9 +239,9 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 ## 🦘 Evitar los _breaking change_
 
 - Extiende la interfaz (API), no elimines cosas viejas.
-- Consume la interfaz pensando en que puede cambiar. Se flexible.
+- Consume la interfaz pensando en que puede cambiar. Sé flexible.
 - Usa tecnologías que permitan compatibilidad con cambios.
-- Interfaces explicitas en que siempre contiene y que puede cambiar.
+- Interfaces explícitas en qué siempre contienen y qué puede cambiar.
 - Captura los _breaking change_ accidentales antes que ocurran (pruebas automáticas idealmente).
 
 ---
@@ -254,7 +278,7 @@ Lectura recomendada: [Using GraphQL with Python – A Complete Guide].
 Los errores cometidos son:
 - No se extiende la interfaz, al agregar dentro de ```naming``` parámetros anteriores ya no es compatible con la versión anterior. 
 - Se borra el correo electrónico: si se estaba usando, se rompe el cliente.
-- Se agrega el parámetro ```number```, el cual no es explicito (mejor ```phone_number```).
+- Se agrega el parámetro ```number```, el cual no es explícito (mejor ```phone_number```).
 
 ---
 
@@ -270,12 +294,12 @@ Si no es posible evitar los _breaking change_, entonces:
 <!-- _class: default -->
 ![h:400px](./assets/bms2_0503.png)
 
-Coexistencia de versiones incompatible del microservicio
+Coexistencia de versiones incompatibles del microservicio
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0504.png)
+![h:225px](./assets/bms2_0504.png)
 
 Emular la vieja interfaz
 
@@ -285,12 +309,12 @@ Emular la vieja interfaz
 
 Ambos son _middleware_ (intermediarios) entre un microservicio y sus clientes (que pueden ser otros microservicios).
 
-En la jerga de sistemas, los _services meshes_ se utilizan en el trafico este-oeste (dentro del cluster) y los _API gateways_ en trafico norte-sur (fuera del cluster).
+En la jerga de sistemas, los _services meshes_ se utilizan en el tráfico este-oeste (dentro del cluster) y los _API gateways_ en tráfico norte-sur (fuera del cluster).
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0506.png)
+![h:225px](./assets/bms2_0506.png)
 
 ---
 
@@ -315,7 +339,7 @@ Esto reduce las funcionalidades que un microservicio necesita implementar intern
 
 ## 📄 Documentación
 
-Documentar cualquier API es caro (y aburrrido). Para minimizar la cantidad de documentación, podemos:
+Documentar cualquier API es caro (y aburrido). Para minimizar la cantidad de documentación, podemos:
 
 - Crear esquemas tanto de los datos de entrada que requiere un servicio como lo que retorna.
 - Sistemas auto-documentables, donde el código y los comentarios sirven de documentación para los clientes de la API.
@@ -340,13 +364,13 @@ Una transacción es cuando una o más acciones se tratan como una sola unidad. E
 
 ### ♾️ ACID
 
-Cuando hablamos de transacciones en bases de datos, esperamos con que sean atómicas, consistentes, aisladas (isolate) y durables, o ACID como acrónimo.
+Cuando hablamos de transacciones en bases de datos, esperamos que sean atómicas, consistentes, aisladas (isolate) y durables, o ACID como acrónimo.
 
 ---
 
 #### ⚛ Atómicas
 
-Asegurarse que todas las operaciones se realicen con éxito o todas falle.
+Asegurarse que todas las operaciones se realicen con éxito o todas fallen.
 
 #### ☑️ Consistentes
 
@@ -380,7 +404,7 @@ La transacción se divide en dos fases:
 
 De todas formas, al ser transacciones distribuidas, no se puede asegurar que van a pasar al mismo tiempo y, mucho menos, que se van a realizar con éxito.
 
-A veces, se implementa sistemas de _lock_ para asegurarse el aislamiento de la consulta. Esto es pésima idea por que puede producir _deadlocks_.
+A veces, se implementa sistemas de _lock_ para asegurarse el aislamiento de la consulta. Esto es pésima idea porque puede producir _deadlocks_.
 
 ---
 
@@ -439,12 +463,12 @@ Implementa el microservicio asignado para el trabajo final. Para esto debes impl
 
 Sube a un repositorio público el código.
 
-Se recomienda utilizar [FastAPI] y leer su la documentación ([[1]](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/#summary-and-description), [[2]](https://fastapi.tiangolo.com/tutorial/schema-extra-example/) y [[3]](https://fastapi.tiangolo.com/tutorial/handling-errors/)).
+Se recomienda utilizar [FastAPI] y leer su documentación ([[1]](https://fastapi.tiangolo.com/tutorial/path-operation-configuration/#summary-and-description), [[2]](https://fastapi.tiangolo.com/tutorial/schema-extra-example/) y [[3]](https://fastapi.tiangolo.com/tutorial/handling-errors/)).
 
 ---
 
 ## 📚 Material complementario
-- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capitulo 5 y 6.
+- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capítulos 5 y 6.
 - Hector Garcia-Molina y Kenneth Salem, "Sagas" ACM Sigmod Record 16, no. 3 (1987): 249–59. 
 
 

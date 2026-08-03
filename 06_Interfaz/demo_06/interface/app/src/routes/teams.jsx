@@ -1,6 +1,18 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { Heading, Link, Flex, Spacer } from '@chakra-ui/react';
+import {
+  Heading,
+  Link,
+  Flex,
+  Spacer,
+  SimpleGrid,
+  Container,
+  Box,
+  Button,
+  Icon,
+  HStack
+} from '@chakra-ui/react';
+import { FiPlus } from 'react-icons/fi';
 
 import { Layout } from '../layout/Layout';
 import { LIST_TEAMS } from '../api/teams';
@@ -28,24 +40,38 @@ function App() {
 
   return (
     <Layout>
-      <Heading align={'center'} size={'4xl'} m={30}>
-        Lista de equipos
-      </Heading>
-      <Flex>
-        <Spacer />
-        <Link
-          as={RouteLink}
-          to="/teams/new"
-          _focus={{ boxShadow: 'none' }}
-          Align="right"
-          mr={10}
+      <Container maxW="container.xl" py={8}>
+        <Box textAlign="center" mb={8}>
+          <Heading size={'4xl'} color="gray.800" mb={4}>
+            Lista de equipos
+          </Heading>
+          <Box w="100px" h="4px" bg="green.500" mx="auto" borderRadius="full" />
+        </Box>
+
+        <Flex justify="space-between" align="center" mb={12}>
+          <Box />
+          <Button
+            as={RouteLink}
+            to="/teams/new"
+            leftIcon={<Icon as={FiPlus} />}
+            colorScheme="green"
+            size="lg"
+            _focus={{ boxShadow: 'none' }}
+          >
+            Nuevo equipo
+          </Button>
+        </Flex>
+
+        <SimpleGrid
+          columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
+          spacing={8}
+          justifyItems="center"
         >
-          Nuevo equipo
-        </Link>
-      </Flex>
-      {data.listTeams.map(team => (
-        <TeamCard key={team.id} team={team} />
-      ))}
+          {data.listTeams.map(team => (
+            <TeamCard key={team.id} team={team} />
+          ))}
+        </SimpleGrid>
+      </Container>
     </Layout>
   );
 }

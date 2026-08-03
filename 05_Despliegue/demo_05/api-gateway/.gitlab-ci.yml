@@ -30,6 +30,6 @@ deploy:
   only:
     - main
   script:
-    - kubectl --kubeconfig $KUBECONFIG apply -f kube.yaml --namespace=microservices
+    - kubectl --kubeconfig $KUBECONFIG apply -f deployment.yaml --namespace=microservices
   tags:
     - docker

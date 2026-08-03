@@ -5,17 +5,13 @@ services:
       - "5002:80"
     volumes:
       - .:/code
-    links:
-      - demo_04_service_02_mongodb
   demo_04_service_events_receiver_02:
     build: .
     volumes:
       - .:/code
-    links:
-      - demo_04_service_02_mongodb
     command: python3 app/events.py
   demo_04_service_02_mongodb:
-    image: mongo:5.0
+    image: mongo:7
     volumes:
       - demo_04_service_02_mongodb_container:/data/db
     logging:
@@ -26,5 +22,5 @@ volumes:
 
 networks:
   default:
-    name: demo_04
+    name: microsvcs
     external: true

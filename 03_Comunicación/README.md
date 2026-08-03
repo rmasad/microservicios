@@ -21,7 +21,7 @@ marp: true
 
 ---
 
-**En este capitulo vamos a revisar distintos mecanismos de comunicación entre servicios, entender las ventajas y desventajas de cada uno, y como seleccionar el que mejor encaja en el problema que estamos tratando de solucionar.**
+**En este capítulo vamos a revisar distintos mecanismos de comunicación entre servicios, entender las ventajas y desventajas de cada uno, y cómo seleccionar el que mejor encaja en el problema que estamos tratando de solucionar.**
 
 ---
 
@@ -29,18 +29,18 @@ marp: true
 
 Las llamadas a través de una red (entre procesos) son muy diferentes a las llamadas dentro del mismo proceso.
 
-Omitir esta dificultad adicional puede traer multiples problemas.
+Omitir esta dificultad adicional puede traer múltiples problemas.
 
 ---
 
 ### 📈 Rendimiento
 
-- Las llamadas dentro entre procesos en una red habitualmente se miden en mili-segundos (ms). La latencia es insignificante en las llamadas dentro de un mismo proceso.
+- Las llamadas entre procesos en una red habitualmente se miden en milisegundos (ms). La latencia es insignificante en las llamadas dentro de un mismo proceso.
 - Una función puede llamar a cientos de funciones dentro del mismo proceso, eso no es recomendable en llamadas entre procesos.
 
 ---
 
-- Lo mismo pasa con los datos: llamadas dentro de un procesos habitualmente pasan los datos como punteros en la memoria, llamadas entre servicios copian y envían los datos.
+- Lo mismo pasa con los datos: llamadas dentro de un proceso habitualmente pasan los datos como punteros en la memoria, llamadas entre servicios copian y envían los datos.
 - Los datos, al enviarse, requieren ser serializados y deserializados.
 
 ---
@@ -48,18 +48,18 @@ Omitir esta dificultad adicional puede traer multiples problemas.
 ### 🔌 Cambios en las interfaces
 
 - Cambiar la interfaz de una función dentro de un proceso no es particularmente complejo: están todos en el mismo repositorio de código.
-- Cambiar la interfaz entre servicios expone a que otro servicio no se puedan desplegar autónomamente.
+- Cambiar la interfaz entre servicios expone a que otro servicio no se pueda desplegar autónomamente.
 
 ---
 
 ### 🚨 Manejo de errores
 
-Además de los errores intrínsecos del resultado de llamar a una función, llamadas a otros servicios traen un conjunto adicional de errores. A continuación, alguno de ellos:
+Además de los errores intrínsecos del resultado de llamar a una función, llamadas a otros servicios traen un conjunto adicional de errores. A continuación, algunos de ellos:
 
 ---
 
 #### 💥 Falla catastrófica o crash
-Todo estuvo bien hasta que el servidor se cayó.¡Reiniciar!
+Todo estuvo bien hasta que el servidor se cayó. ¡Reiniciar!
 
 
 #### 👻 Falla de omisión
@@ -76,7 +76,7 @@ Tienes una respuesta, pero parece estar mal. Por ejemplo, faltan valores en la r
 ---
 
 #### 🤨 Falla arbitraria (o falla bizantina)
-Es cuando algo ha salido mal, pero no sabemos si es hubo error o no (y ¿por qué?).
+Un componente se comporta de forma arbitraria: puede entregar información incorrecta, o incluso contradictoria a distintos observadores (Lamport et al., 1982). No sabemos si hubo error ni por qué.
 
 ---
 
@@ -97,7 +97,7 @@ No es necesario elegir un solo estilo de comunicación. Mezclar estilos, potenci
 
 <!-- _class: default -->
 
-![v:225px](./assets/bms2_0401.png)
+![h:225px](./assets/bms2_0401.png)
 
 ---
 
@@ -107,7 +107,7 @@ No es necesario elegir un solo estilo de comunicación. Mezclar estilos, potenci
 
 El acople temporal es cuando dos operaciones, de dos microservicios, tienen que pasar al mismo tiempo. 
 
-![v:225px](./assets/bms2_0203.png)
+![h:225px](./assets/bms2_0203.png)
 
 ---
 
@@ -115,12 +115,12 @@ El acople temporal es cuando dos operaciones, de dos microservicios, tienen que 
 
 Un microservicio hace una llamada a otro, la operación se bloquea esperando respuesta.
 
-Esto se da por que algunas operaciones posteriores **requieren la respuesta**, o simplemente porque quiere asegurarse el éxito del trabajo para, si no, realizar un **reintento**.
+Esto se da porque algunas operaciones posteriores **requieren la respuesta**, o simplemente porque quiere asegurarse el éxito del trabajo para, si no, realizar un **reintento**.
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0402.png)
+![h:225px](./assets/bms2_0402.png)
 
 ---
 
@@ -146,15 +146,15 @@ return [player for player in players
 #### 👎 Desventajas de _request-response_ sincrónico
 
 La principal desventaja de este patrón es que produce acoplamiento temporal:
-- Si el microservicio al que se le hace la _request_ no esta disponible, la consulta inicial falla.
-- Se requiere esperar la respuesta, esto puede tardar, más aun en consultas a servicios sobrecargados.
+- Si el microservicio al que se le hace la _request_ no está disponible, la consulta inicial falla.
+- Se requiere esperar la respuesta, esto puede tardar, más aún en consultas a servicios sobrecargados.
 - Especialmente problemático cuando se generan cadenas de consultas.
 
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0403.png)
+![h:225px](./assets/bms2_0403.png)
 
 ---
 
@@ -167,22 +167,25 @@ Esta respuesta puede recibirla cualquier instancia del microservicio.
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0405.png)
+![h:225px](./assets/bms2_0405.png)
 
 ---
 
-#### 🧩 Ejemplo de _request-response_ asincrónico
+#### 🧩 Ejemplo de _fire-and-forget_ asincrónico
 
 ```python
+import asyncio
 import aiohttp
 
 session = aiohttp.ClientSession()
 
 url = f"http://players_service/players/train?team_id={team_id}"
-session.get(url)
+asyncio.create_task(session.get(url))
 
 return {'working': True}
 ```
+
+Esto es _fire-and-forget_: disparamos la _request_ y seguimos sin esperar la respuesta. Un _request-response_ asincrónico real requiere un canal de vuelta, típicamente una cola de respuestas que cualquier instancia del microservicio puede consumir.
 
 ---
 
@@ -194,22 +197,21 @@ import aiohttp
 session = aiohttp.ClientSession()
 
 url = f"http://players_service/players?team_id={team_id}"
-players_request = session.get(url)
-
-...
-
-players = await players_request.json()
+response = await session.get(url)
+players = await response.json()
 
 return [player for player in players
         if player['country'] in countries_in_world_cup]
 ```
+
+Aunque usamos `async`/`await`, esta corutina igual queda esperando la respuesta antes de continuar: sigue siendo _request-response_ con acoplamiento temporal.
 
 ---
 
 #### 🥳 Ventajas de _request-response_ asincrónico
 
 - Al no requerir la respuesta inmediatamente, no hay acoplamiento temporal.
-- Se permite respuestas que, por falta de información o alguna regla de negocio, estén en horas o días.
+- Se permiten respuestas que, por falta de información o alguna regla de negocio, estén en horas o días.
 
 ---
 
@@ -223,13 +225,13 @@ return [player for player in players
 ### 📨 Asincrónico sin bloqueo: _event-driven_
 
 - Un microservicio emite un **evento** por cada acción que realiza. Ahí termina su responsabilidad.
-- El microservicio no sabe que acciones otros microservicios van a realizar al respecto.
+- El microservicio no sabe qué acciones otros microservicios van a realizar al respecto.
 - Los microservicios que se suscriben y reciben el evento son los responsables de las respuestas.
 
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0411.png)
+![h:225px](./assets/bms2_0411.png)
 
 ---
 
@@ -238,13 +240,15 @@ return [player for player in players
 ```python
 channel = ...
 
-channel.exchange_declare(exchange='warehouse'
+channel.exchange_declare(exchange='warehouse',
                          exchange_type='topic')
 
-channel.basic_publish(exchange='warehouse'
+channel.basic_publish(exchange='warehouse',
                       routing_key='order.2133.packaged',
-                      body=json.dump({...}))
+                      body=json.dumps({...}))
 ```
+
+En este curso las _routing keys_ siguen la convención `entidad.id.acción`, como `order.2133.packaged`.
 
 ---
 
@@ -252,7 +256,7 @@ channel.basic_publish(exchange='warehouse'
 
 ```python
 ...
-queue = channel.queue_declare('notification', exclusive=True)
+queue = channel.queue_declare('notification')
 channel.queue_bind(exchange='warehouse', queue='notification',
                    routing_key='order.*.packaged')
 
@@ -290,7 +294,7 @@ channel.start_consuming()
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0413.png)
+![h:225px](./assets/bms2_0413.png)
 
 ---
 
@@ -303,7 +307,7 @@ channel.start_consuming()
 ---
 
 <!-- _class: default -->
-![v:225px](./assets/bms2_0414.png)
+![h:225px](./assets/bms2_0414.png)
 
 ---
 
@@ -318,16 +322,17 @@ Este patrón se utiliza cuando un microservicio pone datos en una ubicación def
 
 # 📝 Tarea
 
-Realicen una presentación de proyecto técnico descrito en clases. Debe incluir:
+Realicen una presentación del proyecto técnico descrito en clases. Debe incluir:
 
-- Descripción del problema, contexto de negocio
+- Descripción del problema y su contexto de negocio
 - Lenguaje ubicuo del proyecto
 - Diagrama de arquitectura
-- Listado preliminar de puntos de comunicación con su respectivo patrón arquitectónico 
-- Comunicación entre servicios
+- Listado preliminar de puntos de comunicación, cada uno con su patrón (_request-response_ sincrónico o asincrónico, _event-driven_, datos comunes)
+
+El [ejemplo](./ejemplo/README.md) muestra el nivel de detalle esperado.
 
 ---
 
 ## 📚 Material complementario
-- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capitulo 4.
+- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capítulo 4.
 - Distributed Systems: Principles and Paradigms, Andrew S. Tanenbaum (2016)

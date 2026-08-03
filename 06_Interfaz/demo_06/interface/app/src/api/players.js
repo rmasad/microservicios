@@ -19,3 +19,22 @@ query {
   }
 }
 `;
+
+export const GET_PLAYER = gql`
+  query GetPlayer($id: ID!) {
+    getPlayer(id: $id) {
+      id
+      name
+      age
+      number
+      avatar_url
+      description
+      team {
+        id
+        name
+        country
+        description
+      }
+    }
+  }
+`;

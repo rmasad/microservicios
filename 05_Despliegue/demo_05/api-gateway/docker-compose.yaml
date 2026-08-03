@@ -8,5 +8,5 @@ services:
 
 networks:
   default:
-    name: mcsvcs
+    name: microsvcs
     external: true

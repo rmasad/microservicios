@@ -1,38 +1,45 @@
 import {
   Box,
-  Center,
   useColorModeValue,
   Heading,
   Text,
   Stack,
   Image,
   Divider,
-  Icon
+  Icon,
+  Link
 } from '@chakra-ui/react';
 
 import { FiUsers, FiCreditCard } from 'react-icons/fi';
+import { Link as RouteLink, useNavigate } from 'react-router-dom';
 
 export const PlayerCard = props => {
+  const navigate = useNavigate();
+
   let avatar_url = props.player.avatar_url;
 
   if (!avatar_url) {
-    avatar_url =
-      'https://www.thesportsman.com/media/images/admin/football/boots-flying.jpg';
+    avatar_url = '/default-player-avatar.png';
   }
 
   return (
-    <Center py={12}>
-      <Box
-        role={'group'}
-        p={6}
-        maxW={'330px'}
-        w={'full'}
-        bg={useColorModeValue('white', 'gray.800')}
-        boxShadow={'2xl'}
-        rounded={'lg'}
-        pos={'relative'}
-        zIndex={1}
-      >
+    <Box
+      as={RouteLink}
+      to={`/players/${props.player.id}`}
+      role={'group'}
+      p={6}
+      maxW={'330px'}
+      w={'full'}
+      bg={useColorModeValue('white', 'gray.800')}
+      boxShadow={'2xl'}
+      rounded={'lg'}
+      pos={'relative'}
+      zIndex={1}
+      _hover={{ transform: 'translateY(-2px)', boxShadow: '3xl' }}
+      transition="all 0.2s"
+      cursor="pointer"
+      style={{ textDecoration: 'none' }}
+    >
         <Box
           rounded={'lg'}
           mt={-12}
@@ -83,10 +90,24 @@ export const PlayerCard = props => {
         {props.player.team && (
           <Box>
             <Divider mt={3}/>
-            <Text mt={3}><Icon mr={1} as={FiUsers} /> Equipo: {props.player.team.name}</Text>
+            <Text mt={3}>
+              <Icon mr={1} as={FiUsers} />
+              Equipo: <Link
+                as="span"
+                color="blue.500"
+                _hover={{ textDecoration: 'underline' }}
+                onClick={e => {
+                  // La card completa ya es un <a>: no se puede anidar otro.
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(`/teams/${props.player.team.id}`);
+                }}
+              >
+                {props.player.team.name}
+              </Link>
+            </Text>
           </Box>
         )}
       </Box>
-    </Center>
   );
 };

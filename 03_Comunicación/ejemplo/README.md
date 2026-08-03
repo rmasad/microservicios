@@ -53,7 +53,10 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 - **Profesor**: Persona que imparte clases en la universidad.
 - **Administrativo**: Persona que trabaja en la universidad en labores administrativas.
 - **Curso**: Asignatura que se imparte en la universidad.
+- **Paralelo**: Sección de un curso, con su propio horario y profesor.
 --- 
+- **Inscripción** (_enrollment_): Cupo de un estudiante en un paralelo de un curso.
+- **Matrícula** (_registration_): Registro semestral de un estudiante en la universidad. No confundir con la inscripción a un paralelo.
 - **Arancel**: Pago que los estudiantes deben realizar para cursar un semestre.
 - **Beneficio**: Descuento o ayuda económica otorgada a los estudiantes. Puede ser una beca o un crédito.
 - **Calificación**: Nota obtenida por un estudiante en un curso.
@@ -62,7 +65,7 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 
 ---
 
-## Modulo de gestión de usuarios
+## Módulo de gestión de usuarios
 
 ---
 
@@ -71,13 +74,13 @@ En periodo de inscripción, la plataforma debe ser capaz de manejar un alto volu
 ---
 
 <!-- _class: default -->
-![Modulo de gestión de usuarios](./assets/users.svg)
+![Módulo de gestión de usuarios](./assets/users.svg)
 
 ---
 
 ```mermaid
     C4Context
-      Boundary(b0, "Modulo de gestión de usuarios") {
+      Boundary(b0, "Módulo de gestión de usuarios") {
         Container(users, "User")
       }
 
@@ -147,7 +150,7 @@ Request por API REST:
 
 ---
 
-Envío de mensajes (eventos/event-driven):
+Envío de mensajes (eventos/event-driven), con _routing keys_ según la convención `entidad.id.acción`:
 - **Registro de un nuevo profesor**: `professor.{id}.created`
 - **Actualización de información de un profesor**: `professor.{id}.updated`
 - **Eliminación de un profesor**: `professor.{id}.deleted`
@@ -162,7 +165,7 @@ Envío de mensajes (eventos/event-driven):
 
 ---
 
-## Modulo de gestión de cursos
+## Módulo de gestión de cursos
 
 ---
 
@@ -171,13 +174,13 @@ Envío de mensajes (eventos/event-driven):
 ---
 
 <!-- _class: default -->
-![Modulo de gestión de cursos](./assets/courses.svg)
+![Módulo de gestión de cursos](./assets/courses.svg)
 
 ---
 
 ```mermaid
     C4Context
-      Boundary(b1, "Modulo de gestión de cursos") {
+      Boundary(b1, "Módulo de gestión de cursos") {
         Container(courses, "Course")
         Container(schedules, "Schedule")
         Container(enrollment, "Enrollment")
@@ -295,7 +298,7 @@ Mensajes (eventos/event-driven):
 
 ---
 
-## Modulo de gestión de calificaciones
+## Módulo de gestión de calificaciones
 
 ---
 
@@ -303,13 +306,13 @@ Mensajes (eventos/event-driven):
 ---
 
 <!-- _class: default -->
-![Modulo de gestión de calificaciones](./assets/grades.svg)
+![Módulo de gestión de calificaciones](./assets/grades.svg)
 
 ---
 
 ```mermaid
     C4Context
-      Boundary(b2, "Modulo de gestión de calificaciones") {
+      Boundary(b2, "Módulo de gestión de calificaciones") {
         Container(grades, "Grade")
       }
 
@@ -342,16 +345,16 @@ Mensajes (eventos/event-driven):
 ### Listado de puntos de comunicación de calificaciones
 
 Request por API REST:
-- **Registrar una calificación**: `POST /api/v1/{course_id}/grades`
-- **Actualizar una calificación**: `PUT /api/v1/{course_id}/grades/{grade_id}`
+- **Registrar una calificación**: `POST /api/v1/courses/{course_id}/grades`
+- **Actualizar una calificación**: `PUT /api/v1/courses/{course_id}/grades/{grade_id}`
 ---
 
-- **Eliminar una calificación**: `DELETE /api/v1/{course_id}/grades/{grade_id}`
-- **Consultar información de una calificación**: `GET /api/v1/{course_id}/grades/{grade_id}`
-- **Listar todas las calificaciones de un estudiante**: `GET /api/v1/{student_id}/grades`
+- **Eliminar una calificación**: `DELETE /api/v1/courses/{course_id}/grades/{grade_id}`
+- **Consultar información de una calificación**: `GET /api/v1/courses/{course_id}/grades/{grade_id}`
+- **Listar todas las calificaciones de un estudiante**: `GET /api/v1/students/{student_id}/grades`
 ---
-- **Listar todas las calificaciones de un curso**: `GET /api/v1/{course_id}/grades`
-- **Listar todas las calificaciones de un paralelo**: `GET /api/v1/{course_id}/parallels/{parallel_id}/grades`
+- **Listar todas las calificaciones de un curso**: `GET /api/v1/courses/{course_id}/grades`
+- **Listar todas las calificaciones de un paralelo**: `GET /api/v1/courses/{course_id}/parallels/{parallel_id}/grades`
 
 ---
 
@@ -363,7 +366,7 @@ Mensajes (eventos/event-driven):
 
 ---
 
-## Modulo de gestión de aranceles
+## Módulo de gestión de aranceles
 
 ---
 
@@ -372,13 +375,13 @@ Mensajes (eventos/event-driven):
 ---
 
 <!-- _class: default -->
-![Modulo de gestión de aranceles](./assets/payment.svg)
+![Módulo de gestión de aranceles](./assets/payment.svg)
 
 ---
 
 ```mermaid
     C4Context
-      Boundary(b3, "Modulo de gestión de aranceles") {
+      Boundary(b3, "Módulo de gestión de aranceles") {
         Container(debt, "Debt")
         Container(payment, "Payment")
         Container(benefit, "Benefit")
@@ -404,13 +407,13 @@ Mensajes (eventos/event-driven):
 
 - **Consultar información de un arancel**: El sistema debe permitir consultar la información de un arancel.
 - **Listar todos los aranceles de un estudiante**: El sistema debe permitir listar todos los aranceles de un estudiante. Con paginación y filtros.
-- **Registrar matricula**: El sistema debe permitir registrar una matricula para un estudiante. Esto se debe hacer al inicio de cada semestre de forma asincrónica.
+- **Registrar matrícula**: El sistema debe permitir registrar una matrícula para un estudiante. Esto se debe hacer al inicio de cada semestre de forma asincrónica.
 ---
-- **Actualizar información de una matricula**: El sistema debe permitir actualizar la información de una matricula.
-- **Eliminar una matricula**: El sistema debe permitir eliminar una matricula. Esta acción debe ser reversible.
-- **Consultar información de una matricula**: El sistema debe permitir consultar la información de una matricula.
+- **Actualizar información de una matrícula**: El sistema debe permitir actualizar la información de una matrícula.
+- **Eliminar una matrícula**: El sistema debe permitir eliminar una matrícula. Esta acción debe ser reversible.
+- **Consultar información de una matrícula**: El sistema debe permitir consultar la información de una matrícula.
 ---
-- **Listar todas las matriculas de un estudiante**: El sistema debe permitir listar todas las matriculas de un estudiante. Con paginación y filtros.
+- **Listar todas las matrículas de un estudiante**: El sistema debe permitir listar todas las matrículas de un estudiante. Con paginación y filtros.
 - **Registrar un beneficio**: El sistema debe permitir registrar un beneficio para un estudiante. Esto debe marcar como pagado una deuda del estudiante.
 - **Actualizar información de un beneficio**: El sistema debe permitir actualizar la información de un beneficio.
 ---
@@ -434,20 +437,20 @@ Mensajes (eventos/event-driven):
 ### Listado de puntos de comunicación de aranceles
 
 Request por API REST:
-- **Registrar aranceles**: `POST /api/v1/{student_id}/debts`
-- **Actualizar información de un arancel**: `PUT /api/v1/{student_id}/debts/{debt_id}`
-- **Eliminar un arancel**: `DELETE /api/v1/{student_id}/debts/{debt_id}`
+- **Registrar aranceles**: `POST /api/v1/students/{student_id}/debts`
+- **Actualizar información de un arancel**: `PUT /api/v1/students/{student_id}/debts/{debt_id}`
+- **Eliminar un arancel**: `DELETE /api/v1/students/{student_id}/debts/{debt_id}`
 ---
 
-- **Consultar información de un arancel**: `GET /api/v1/{student_id}/debts/{debt_id}`
-- **Listar todos los aranceles de un estudiante**: `GET /api/v1/{student_id}/debts`
-- **Registrar matricula**: `POST /api/v1/{student_id}/enrollments`
-- **Actualizar información de una matricula**: `PUT /api/v1/{student_id}/enrollments/{enrollment_id}`
+- **Consultar información de un arancel**: `GET /api/v1/students/{student_id}/debts/{debt_id}`
+- **Listar todos los aranceles de un estudiante**: `GET /api/v1/students/{student_id}/debts`
+- **Registrar matrícula**: `POST /api/v1/students/{student_id}/registrations`
+- **Actualizar información de una matrícula**: `PUT /api/v1/students/{student_id}/registrations/{registration_id}`
 ---
 
-- **Eliminar una matricula**: `DELETE /api/v1/{student_id}/enrollments/{enrollment_id}`
-- **Consultar información de una matricula**: `GET /api/v1/{student_id}/enrollments/{enrollment_id}`
-- **Listar todas las matriculas de un estudiante**: `GET /api/v1/{student_id}/enrollments`
+- **Eliminar una matrícula**: `DELETE /api/v1/students/{student_id}/registrations/{registration_id}`
+- **Consultar información de una matrícula**: `GET /api/v1/students/{student_id}/registrations/{registration_id}`
+- **Listar todas las matrículas de un estudiante**: `GET /api/v1/students/{student_id}/registrations`
 
 ---
 
@@ -460,20 +463,20 @@ Mensajes (eventos/event-driven):
 ### Listado de puntos de comunicación de beneficios
 
 Request por API REST:
-- **Registrar un beneficio**: `POST /api/v1/{student_id}/benefits`
-- **Actualizar información de un beneficio**: `PUT /api/v1/{student_id}/benefits/{benefit_id}`
-- **Eliminar un beneficio**: `DELETE /api/v1/{student_id}/benefits/{benefit_id}`
+- **Registrar un beneficio**: `POST /api/v1/students/{student_id}/benefits`
+- **Actualizar información de un beneficio**: `PUT /api/v1/students/{student_id}/benefits/{benefit_id}`
+- **Eliminar un beneficio**: `DELETE /api/v1/students/{student_id}/benefits/{benefit_id}`
 ---
 
-- **Consultar información de un beneficio**: `GET /api/v1/{student_id}/benefits/{benefit_id}`
-- **Listar todos los beneficios de un estudiante**: `GET /api/v1/{student_id}/benefits`
-- **Registrar un pago mediante un beneficio**: `POST /api/v1/{student_id}/benefits/{benefit_id}/payments`
-- **Actualizar información de un pago mediante un beneficio**: `PUT /api/v1/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
+- **Consultar información de un beneficio**: `GET /api/v1/students/{student_id}/benefits/{benefit_id}`
+- **Listar todos los beneficios de un estudiante**: `GET /api/v1/students/{student_id}/benefits`
+- **Registrar un pago mediante un beneficio**: `POST /api/v1/students/{student_id}/benefits/{benefit_id}/payments`
+- **Actualizar información de un pago mediante un beneficio**: `PUT /api/v1/students/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
 ---
 
-- **Eliminar un pago mediante un beneficio**: `DELETE /api/v1/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
-- **Consultar información de un pago mediante un beneficio**: `GET /api/v1/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
-- **Listar todos los pagos de un beneficio**: `GET /api/v1/{student_id}/benefits/{benefit_id}/payments`
+- **Eliminar un pago mediante un beneficio**: `DELETE /api/v1/students/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
+- **Consultar información de un pago mediante un beneficio**: `GET /api/v1/students/{student_id}/benefits/{benefit_id}/payments/{payment_id}`
+- **Listar todos los pagos de un beneficio**: `GET /api/v1/students/{student_id}/benefits/{benefit_id}/payments`
 
 ---
 
@@ -490,14 +493,14 @@ Mensajes (eventos/event-driven):
 ### Listado de puntos de comunicación de pagos
 
 Request por API REST:
-- **Registrar un pago**: `POST /api/v1/{student_id}/payments`
-- **Actualizar información de un pago**: `PUT /api/v1/{student_id}/payments/{payment_id}`
-- **Eliminar un pago**: `DELETE /api/v1/{student_id}/payments/{payment_id}`
+- **Registrar un pago**: `POST /api/v1/students/{student_id}/payments`
+- **Actualizar información de un pago**: `PUT /api/v1/students/{student_id}/payments/{payment_id}`
+- **Eliminar un pago**: `DELETE /api/v1/students/{student_id}/payments/{payment_id}`
 ---
 
-- **Consultar información de un pago**: `GET /api/v1/{student_id}/payments/{payment_id}`
-- **Listar todos los pagos de un estudiante**: `GET /api/v1/{student_id}/payments`
-- **Listar todos los pagos de un arancel**: `GET /api/v1/{student_id}/debts/{debt_id}/payments`
+- **Consultar información de un pago**: `GET /api/v1/students/{student_id}/payments/{payment_id}`
+- **Listar todos los pagos de un estudiante**: `GET /api/v1/students/{student_id}/payments`
+- **Listar todos los pagos de un arancel**: `GET /api/v1/students/{student_id}/debts/{debt_id}/payments`
 ---
 
 Mensajes (eventos/event-driven):
@@ -519,11 +522,11 @@ Mensajes (eventos/event-driven):
 
 ```mermaid
     C4Context
-      Boundary(b0, "Modulo de gestión de usuarios") {
+      Boundary(b0, "Módulo de gestión de usuarios") {
         Container(users, "User")
       }
 
-      Boundary(b1, "Modulo de gestión de cursos") {
+      Boundary(b1, "Módulo de gestión de cursos") {
         Container(courses, "Course")
         Container(schedules, "Schedule")
         Container(enrollment, "Enrollment")
@@ -536,7 +539,7 @@ Mensajes (eventos/event-driven):
       Rel(schedules, users, "")
       Rel(enrollment, users, "")
 
-      Boundary(b2, "Modulo de gestión de calificaciones") {
+      Boundary(b2, "Módulo de gestión de calificaciones") {
         Container(grades, "Grade")
       }
 
@@ -544,7 +547,7 @@ Mensajes (eventos/event-driven):
       Rel(grades, courses, "")
       Rel(grades, schedules, "")
 
-      Boundary(b3, "Modulo de gestión de aranceles") {
+      Boundary(b3, "Módulo de gestión de aranceles") {
         Container(debt, "Debt")
         Container(payment, "Payment")
         Container(benefit, "Benefit")
@@ -560,11 +563,3 @@ Mensajes (eventos/event-driven):
 ---
 
 # 👏
-
-<div class="mermaid">
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-</div>

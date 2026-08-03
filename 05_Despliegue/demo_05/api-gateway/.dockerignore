@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.git
+.gitlab-ci.yml
+README.md
+docker-compose.yaml
+deployment.yaml

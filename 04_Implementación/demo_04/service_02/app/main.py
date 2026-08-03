@@ -7,6 +7,9 @@ from bson.objectid import ObjectId
 
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
+from pydantic import ConfigDict
+from pydantic import Field
+from pydantic import field_validator
 
 from .events import Emit
 
@@ -36,16 +39,18 @@ class Country(str, Enum):
 
 
 class Team(BaseModel):
-    id: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    id: str | None = Field(default=None, alias="_id")
     name: str
     country: Country
 
     description: str = ""
 
-    def __init__(self, **kargs):
-        if "_id" in kargs:
-            kargs["id"] = str(kargs["_id"])
-        BaseModel.__init__(self, **kargs)
+    @field_validator("id", mode="before")
+    @classmethod
+    def objectid_to_str(cls, value):
+        return str(value) if value is not None else None
 
 
 @app.get("/")
@@ -54,12 +59,12 @@ async def root():
 
 
 @app.get("/teams")
-def teams_all(id: list[int] = Query(None)):
+def teams_all(id: list[str] = Query(None)):
     filters = dict()
     if id:
         filters['_id'] = {"$in": [ObjectId(_id) for _id in id]}
 
-    teams = [Team(**team).dict()
+    teams = [Team(**team).model_dump()
              for team in mongodb_client.service_02.teams.find(filters)]
 
     return teams
@@ -69,7 +74,7 @@ def teams_all(id: list[int] = Query(None)):
 def teams_get(team_id: str):
     team = Team(
         **mongodb_client.service_02.teams.find_one({"_id": ObjectId(team_id)})
-    ).dict()
+    ).model_dump()
 
     return team
 
@@ -78,11 +83,11 @@ def teams_get(team_id: str):
 def teams_delete(team_id: str):
     team = Team(
         **mongodb_client.service_02.teams.find_one({"_id": ObjectId(team_id)})
-    ).dict()
+    ).model_dump()
 
     mongodb_client.service_02.teams.delete_one({"_id": ObjectId(team_id)})
 
-    emit_events.send(team_id, "delete", team.dict())
+    emit_events.send(team_id, "delete", team)
 
     return team
 
@@ -93,7 +98,7 @@ def teams_create(team: Team):
     time.sleep(3)
 
     inserted_id = mongodb_client.service_02.teams.insert_one(
-        team.dict()
+        team.model_dump(exclude={"id"})
     ).inserted_id
 
     new_team = Team(
@@ -103,6 +108,6 @@ def teams_create(team: Team):
     )
 
     logging.info(f"✨ New team created: {new_team}")
-    emit_events.send(inserted_id, "create", new_team.dict())
+    emit_events.send(inserted_id, "create", new_team.model_dump())
 
     return new_team

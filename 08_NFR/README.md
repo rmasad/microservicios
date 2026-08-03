@@ -7,7 +7,7 @@ marp: true
 <!-- paginate: true -->
 <!-- footer: Microservicios por Rafik Mas'ad Nasra -->
 <!-- author: Rafik Mas'ad Nasra -->
-<!-- title: Introducción a microservicios -->
+<!-- title: Seguridad, resiliencia y escalabilidad -->
 <!-- size: 16:9 -->
 
 <style>    
@@ -121,7 +121,7 @@ Es esencial proteger nuestros activos más valiosos y vulnerables. Este punto es
 
 Detectar incidentes en arquitecturas de microservicios es más complejo. Hay más redes y máquinas que monitorear, lo que aumenta los lugares a observar.
 
-La agregación de registros, pueden ayudar a detectar posibles problemas. Hay herramientas especializadas como sistemas de detección de intrusiones para identificar comportamientos maliciosos.
+La agregación de registros puede ayudar a detectar posibles problemas. Hay herramientas especializadas como sistemas de detección de intrusiones para identificar comportamientos maliciosos.
 
 ---
 
@@ -189,7 +189,7 @@ Si se limita el alcance de lo que una credencial permite, se reduce el potencial
 
 #### Backups
 
-Los datos son invaluables y su pérdida puede ser catastrófico. Por lo tanto, las copias de seguridad regulares son esenciales para preservar estos datos.
+Los datos son invaluables y su pérdida puede ser catastrófica. Por lo tanto, las copias de seguridad regulares son esenciales para preservar estos datos.
 
 Es fundamental probar regularmente los respaldos, para corroborar su integridad.
 
@@ -213,7 +213,7 @@ Riesgo: un atacante dentro de la red podría causar un caos significativo.
 
 **Cero confianza**: asumir que todas las llamadas son potencialmente maliciosas. Requiere más esfuerzo, pero es más seguro. Los conceptos de "perímetro" no tienen significado; asume la necesidad de cifrar datos y validar comunicaciones constantemente.
 
-No es un producto o herramienta, sino un enfoque y principio de seguridad Requiere evaluación y verificación constante de la confianza en todas las comunicaciones. 
+No es un producto o herramienta, sino un enfoque y principio de seguridad. Requiere evaluación y verificación constante de la confianza en todas las comunicaciones. 
 
 ---
 
@@ -238,11 +238,25 @@ Para esto:
 
 ---
 
+#### mTLS sin tocar código
+
+Gestionar certificados en cada microservicio es engorroso: emisión, distribución, rotación.
+
+Un _service mesh_ (Istio, Linkerd) resuelve esto en la práctica.
+
+- Un proxy junto a cada servicio intercepta el tráfico.
+- El mesh emite y rota los certificados, y aplica mTLS entre proxies.
+- El código del microservicio no cambia.
+
+<!-- El punto pedagógico: mTLS es el mecanismo correcto para autenticar servicio a servicio, pero implementarlo a mano en cada servicio no escala operacionalmente. El service mesh mueve esa responsabilidad a la plataforma. El costo es infraestructura adicional y otra pieza que aprender a operar. -->
+
+---
+
 **Datos en reposo**: datos sensibles deben ser protegidos para evitar ser leídos o robados. Para esto: 
 
 - Uso de software y algoritmos de cifrado conocidos y probados.
-- Cifrado de contraseñas con técnicas de hash saladas. Considerar la sobrecarga computacional de cifrar todo.
-- Encriptar solo los datos necesarios y ser prudentes con el almacenamiento de información.
+- Contraseñas con hash salado (bcrypt o argon2). Ojo: el hash no es cifrado, no es reversible; nunca deberíamos poder recuperar la contraseña original.
+- Cifrar solo los datos necesarios y ser prudentes con el almacenamiento de información. Considerar la sobrecarga computacional de cifrar todo.
 
 ---
 
@@ -272,6 +286,30 @@ El usuario es redirigido al proveedor de identidad para autenticarse. Una vez au
 Pueden ser sistemas alojados externamente o internamente en una organización.
 
 El proveedor de identidad valida quién es el usuario, pero el sistema decide qué se le permite hacer.
+
+---
+
+#### OAuth 2.0
+
+Es el estándar que hay detrás de casi todo esto.
+
+- Protocolo de **autorización** delegada: un cliente obtiene un _access token_ para acceder a recursos en nombre del usuario.
+- Define roles (cliente, servidor de autorización, servidor de recursos) y flujos (_grants_) según el tipo de aplicación.
+- El token viaja en cada petición; los microservicios lo validan.
+
+<!-- Aclarar en clase: OAuth 2.0 por sí solo NO autentica al usuario, autoriza el acceso a recursos. El error clásico es usar un access token como prueba de identidad. Ejemplos concretos que los estudiantes ya usaron: "Iniciar sesión con Google" usa OIDC sobre OAuth 2.0. -->
+
+---
+
+#### OpenID Connect (OIDC)
+
+Capa de **autenticación** construida sobre OAuth 2.0.
+
+- Agrega el _ID token_, un JWT con la identidad del usuario.
+- Es lo que usan los proveedores de identidad modernos (Google, Microsoft Entra ID, Keycloak, Auth0).
+- En la práctica: SSO para humanos se resuelve con OIDC; la autorización delegada, con OAuth 2.0.
+
+<!-- Conectar con las slides anteriores: el "proveedor de identidad" del que hablamos en SSO habla OIDC. El JWT que veremos en las próximas slides es el mismo formato del ID token. -->
 
 ---
 
@@ -314,7 +352,7 @@ Evitar que una gran cantidad de información sobre el comportamiento de un servi
 
 Permiten almacenar múltiples declaraciones (claims) sobre un usuario.
 
-Pueden ser firmados para asegurar la integridad y opcionalmente encriptados para proteger la privacidad de los datos.
+Pueden ser firmados para asegurar la integridad y opcionalmente cifrados para proteger la privacidad de los datos.
 
 Comúnmente usados para transmitir información que ayuda a la autorización.
 
@@ -356,7 +394,7 @@ La necesidad de incluir mucha información puede llevar a tokens demasiado grand
 
 ### ¿Qué es la resiliencia?
 
-El termino se usa en muchos contextos, pero en general se refiere a la capacidad de recuperarse de un evento traumático.
+El término se usa en muchos contextos, pero en general se refiere a la capacidad de recuperarse de un evento traumático.
 
 ---
 
@@ -372,7 +410,7 @@ David Woods, categorizó cuatro aspectos de la resiliencia:
 
 Es la capacidad de incorporar mecanismos y procesos para manejar problemas esperados. En microservicios, enfrentamos diversas perturbaciones como fallos de host, desconexiones de red o indisponibilidad de un microservicio.
 
-Algunas estrategias como remplazo automático de hosts, reintentos en operaciones, o un manejo elegante de fallos en microservicios.
+Algunas estrategias como reemplazo automático de hosts, reintentos en operaciones, o un manejo elegante de fallos en microservicios.
 
 ---
 
@@ -438,7 +476,7 @@ No importa cuán exitosos hayamos sido en el pasado, el futuro puede presentar d
 
 #### Caos controlado
 
-introducir deliberadamente el caos en nuestros sistemas es una forma de probar la resiliencia de nuestros sistemas y nuestra capacidad para responder a lo inesperado.
+Introducir deliberadamente el caos en nuestros sistemas es una forma de probar la resiliencia de nuestros sistemas y nuestra capacidad para responder a lo inesperado.
 
 ---
 
@@ -480,7 +518,7 @@ Muchas organizaciones se centran en procesos y controles para prevenir fallos pe
 
 #### Asumir que todo puede fallar
 
-Incorporar la premisa de que todo puede y fallará lleva a enfoques diferentes en la resolución de problemas. Por ejemplo, Google construyó sus sistemas de tal manera que el fallo de una máquina no interrumpiera el servicio, aumentando así la robustez del sistema. En lugar de invertir excesivamente en máquinas individuales, más sensato tener un mayor número de máquinas más económicas y eficientes en su recuperación.
+Incorporar la premisa de que todo puede fallar y fallará lleva a enfoques diferentes en la resolución de problemas. Por ejemplo, Google construyó sus sistemas de tal manera que el fallo de una máquina no interrumpiera el servicio, aumentando así la robustez del sistema. En lugar de invertir excesivamente en máquinas individuales, es más sensato tener un mayor número de máquinas más económicas y eficientes en su recuperación.
 
 ---
 
@@ -507,7 +545,14 @@ A diferencia de las aplicaciones monolíticas, donde la salud del sistema es bin
 
 #### Timeout
 
-En un sistema distribuido, establecer correctamente los tiempos de espera es esencial. Un tiempo de espera demasiado largo puede ralentizar todo el sistema, mientras que uno demasiado corto puede dar por fallida una llamada que podría haber funcionado. La ausencia total de time-outs puede provocar que un servicio inactivo paralice todo el sistema.
+¿Cuánto esperamos antes de dar una llamada por perdida?
+
+- Demasiado largo: ralentiza todo el sistema.
+- Demasiado corto: da por fallida una llamada que podría haber funcionado.
+- Sin timeout: un servicio inactivo puede paralizar todo el sistema.
+
+<!-- El caso sin timeout es el peor: los hilos del cliente quedan esperando para siempre a un servicio muerto, se agotan los recursos y el fallo se propaga hacia arriba. Es la puerta de entrada a los demás patrones: retry decide qué hacer después de un timeout, y el circuit breaker decide cuándo dejar de intentar. -->
+
 
 ---
 
@@ -526,15 +571,39 @@ En un sistema distribuido, establecer correctamente los tiempos de espera es ese
 
 #### Reintento (Retry)
 
-Muchos problemas con llamadas a servicios externos, como pérdida de paquetes o picos de carga en gateways, son temporales. En estos casos, reintentar la llamada puede ser efectivo.
+Muchos fallos son temporales: pérdida de paquetes, picos de carga en gateways.
 
-Es crucial identificar qué tipos de fallos en llamadas a servicios externos justifican un reintento. Utilizando protocolos como HTTP, los códigos de respuesta pueden indicar la viabilidad de un reintento.
+- Reintentar solo fallos que lo justifican: en HTTP, un 503 sí; un 404 no.
+- Esperar entre reintentos, con **backoff exponencial**: 1s, 2s, 4s, 8s...
+- Limitar el número de reintentos y combinar con timeouts.
+
+<!-- Es crucial identificar qué tipos de fallos justifican un reintento. Los códigos de respuesta HTTP indican la viabilidad: errores 5xx y timeouts suelen ser transitorios; un 400 o 404 va a fallar igual las diez veces. Reintentar sin espera ni límite es la receta para empeorar el problema, como veremos en la siguiente slide. -->
+
+---
+
+#### Retry storms y jitter
+
+Un servicio se cae y todos sus clientes reintentan al mismo tiempo.
+
+- El servicio vuelve y recibe una avalancha de reintentos sincronizados: vuelve a caer. Eso es una **retry storm**.
+- Solución: agregar **jitter**, una espera aleatoria sumada al backoff.
+- Los reintentos se desincronizan y la carga vuelve de forma gradual.
+
+<!-- Este es un fallo emergente clásico: cada cliente hace lo "correcto" (reintentar con backoff), pero como todos vieron el fallo en el mismo instante, sus reintentos quedan sincronizados. El backoff exponencial solo espacia las olas, no las rompe. El jitter rompe la sincronía. Librerías como tenacity (Python) traen esto listo: wait_exponential + wait_random. Ver demo_08. -->
 
 ---
 
 #### Circuit Breaker
 
-Un circuit breaker es un patrón de diseño que permite a un sistema responder rápidamente a fallos en llamadas a servicios externos. Cuando se produce un fallo, el circuit breaker evita que se realicen más llamadas al servicio externo durante un período de tiempo determinado. Esto evita que el sistema se sobrecargue con llamadas fallidas.
+Como un automático eléctrico: si un servicio falla, dejamos de llamarlo por un rato y fallamos rápido.
+
+Tres estados:
+
+- **Closed**: todo normal, las llamadas pasan.
+- **Open**: se superó un umbral de fallos (por ej. 5 fallos seguidos o 50% de error en 30s); las llamadas fallan de inmediato, sin ir a la red.
+- **Half-open**: pasado un tiempo de espera, se deja pasar una llamada de prueba. Si funciona, vuelve a closed; si falla, vuelve a open.
+
+<!-- Dos beneficios: el cliente no se queda bloqueado esperando timeouts contra un servicio muerto, y el servicio caído recibe tregua para recuperarse en vez de una avalancha. Los umbrales (cuántos fallos abren el circuito, cuánto dura el estado open) se ajustan mirando los tiempos de respuesta normales, igual que los timeouts. Fallar rápido permite además degradar la funcionalidad: mostrar datos cacheados o un mensaje, en vez de colgar toda la página. -->
 
 ---
 
@@ -544,9 +613,27 @@ Un circuit breaker es un patrón de diseño que permite a un sistema responder r
 
 ---
 
+#### Bulkhead
+
+En un barco, los mamparos (_bulkheads_) dividen el casco en compartimientos: una filtración no hunde el barco completo.
+
+- En software: separar recursos por dependencia, para que el fallo de una no agote los recursos de todas.
+- Ejemplo: pools de conexiones separados por servicio downstream. Si el servicio de pagos se cuelga, sus conexiones se agotan, pero las del catálogo siguen libres.
+- El circuit breaker corta las llamadas; el bulkhead limita el daño mientras tanto.
+
+<!-- El escenario típico sin bulkhead: un servicio downstream lento hace que todos los hilos o conexiones del cliente queden esperando respuestas de ese servicio, y el cliente completo deja de responder, incluso para funcionalidades que no dependen del servicio lento. Con pools separados, el daño queda contenido en el compartimiento. Es el mismo principio de aislamiento de la siguiente slide, aplicado a los recursos internos de un proceso. -->
+
+---
+
 #### Aislamiento de fallos
 
-La dependencia entre microservicios es un factor clave en la resiliencia del sistema. Cuanto más depende un microservicio de otro, mayor es el impacto de su indisponibilidad en la funcionalidad global. Utilizar tecnologías que permitan la operación offline de servicios downstream, como middleware o sistemas de amortiguación de llamadas, reduce el impacto de las interrupciones, ya sean planeadas o inesperadas, en los microservicios upstream.
+Cuanto más depende un microservicio de otro, mayor el impacto de su indisponibilidad.
+
+- Reducir el acoplamiento temporal: middleware o colas que amortiguan las llamadas.
+- Un servicio downstream caído no debería botar al upstream.
+- Aplica igual para interrupciones planeadas (despliegues) e inesperadas.
+
+<!-- La dependencia entre microservicios es un factor central en la resiliencia. Tecnologías que permiten la operación offline de servicios downstream, como brokers de mensajes, reducen el impacto de las interrupciones en los microservicios upstream: el mensaje queda en la cola y se procesa cuando el servicio vuelve. -->
 
 ---
 
@@ -621,6 +708,92 @@ La ingeniería del caos, en su forma más básica, ayuda a mejorar la robustez d
 #### Más allá de las herramientas
 
 Implementar herramientas de ingeniería del caos no garantiza por sí mismo la resiliencia. Es crucial un enfoque integral que incluya la preparación del equipo y la adaptación continua de procesos y sistemas.
+
+---
+
+# Observabilidad
+
+---
+
+No podemos ser resilientes frente a lo que no vemos.
+
+- En un monolito, un stack trace cuenta la historia completa.
+- En microservicios, una petición cruza varios servicios, redes y máquinas.
+- Observabilidad: poder entender el estado interno del sistema desde sus salidas externas.
+
+Tres pilares: logs, métricas y trazas.
+
+<!-- Newman dedica el capítulo 10 completo a esto (From Monitoring to Observability). La distinción que hace: monitoreo es algo que hacemos (una actividad), observabilidad es una propiedad del sistema. Con decenas de servicios, las preguntas interesantes son las que no anticipamos, y para responderlas necesitamos datos ricos, no solo un dashboard con CPU y memoria. -->
+
+---
+
+### Logs estructurados y agregación
+
+Con 20 servicios y 3 réplicas de cada uno, entrar a cada máquina a leer archivos no escala.
+
+- Logs en formato estructurado (JSON), no texto libre: se pueden consultar como datos.
+- Todos los servicios envían sus logs a un sistema central de agregación.
+- Esto ya lo hicieron: la tarea de la unidad 1 con Promtail, Loki y Grafana es exactamente esta arquitectura.
+
+<!-- Recordarles la tarea de la unidad 1: dos servicios FastAPI enviando logs vía Promtail a Loki, visualizados en Grafana. En ese momento parecía un ejercicio de infraestructura; ahora pueden ver el porqué: sin agregación de logs, diagnosticar un incidente en producción con múltiples servicios es prácticamente imposible. Newman de hecho dice que la agregación de logs es un prerrequisito para adoptar microservicios. -->
+
+---
+
+### Métricas
+
+Los logs cuentan qué pasó; las métricas cuentan cuánto y qué tan seguido.
+
+- Series de tiempo: latencia, tasa de errores, peticiones por segundo, uso de recursos.
+- Sirven para alertar (tasa de error sobre el umbral) y para decidir (¿necesitamos escalar?).
+- Herramientas típicas: Prometheus para recolectar, Grafana para visualizar.
+
+<!-- Conviene distinguir métricas de sistema (CPU, memoria) de métricas de aplicación (peticiones, errores, latencia por endpoint). Las segundas son las que responden "¿está funcionando el negocio?". Las métricas también alimentan el autoescalado que veremos al final de la unidad. -->
+
+---
+
+### Trazas distribuidas
+
+¿Dónde se gastaron los 800 ms de esta petición que cruzó 5 servicios?
+
+- **Correlation id**: identificador único que se genera al entrar la petición y se propaga en cada llamada entre servicios.
+- Con él podemos juntar los logs y tiempos de todos los servicios que participaron en una misma petición.
+- Una traza se compone de _spans_: cada operación registra cuándo empezó y cuánto tardó.
+
+---
+
+### OpenTelemetry
+
+El estándar abierto para instrumentar servicios.
+
+- Define cómo generar y propagar trazas, métricas y logs, con SDKs para los lenguajes principales.
+- Los datos se exportan a herramientas como Jaeger o Grafana Tempo para visualizar la traza completa.
+- Al ser estándar, evita quedar amarrado a un proveedor de observabilidad.
+
+<!-- OpenTelemetry es la fusión de OpenTracing y OpenCensus, hoy proyecto de la CNCF y el estándar de facto. El punto clave para la prueba: el correlation id (trace id) debe propagarse en las cabeceras de cada llamada, y eso requiere disciplina o instrumentación automática; si un servicio en la cadena no lo propaga, la traza se corta. -->
+
+---
+
+### SLI y SLO
+
+¿Cómo sabemos si el sistema está "suficientemente bien"?
+
+- **SLI** (Service Level Indicator): lo que medimos. Por ej., latencia p99, % de respuestas exitosas.
+- **SLO** (Service Level Objective): la meta sobre ese indicador. Por ej., 99,9% de respuestas exitosas en 30 días.
+- Un SLA es un contrato con el cliente sobre esos objetivos, con consecuencias si no se cumple.
+
+<!-- El orden importa: primero se elige qué medir (SLI), después cuánto exigirse (SLO), y solo lo que se firma con un tercero es SLA. Preguntarles: ¿qué SLI definirían para su proyecto grupal? Esto conecta directo con la pregunta 4 del control: una métrica clara, medible y con umbral para activar contingencia. -->
+
+---
+
+### Error budgets
+
+Si el SLO es 99,9%, el 0,1% restante es el **presupuesto de error**.
+
+- Es la cantidad de fallo que aceptamos en un período; no se persigue el 100%.
+- Con presupuesto disponible: se puede arriesgar (desplegar seguido, experimentar).
+- Presupuesto agotado: se congela lo riesgoso y se invierte en estabilidad.
+
+<!-- Idea tomada de los SRE de Google. El error budget transforma la pelea eterna entre "queremos desplegar rápido" y "queremos estabilidad" en una regla objetiva basada en datos. También le da permiso explícito al equipo para fallar un poco: la perfección es carísima y los usuarios no la notan. Cierra bien el círculo con chaos engineering: si te sobra presupuesto de error, puedes gastarlo en experimentos. -->
 
 ---
 
@@ -890,6 +1063,6 @@ Fundamentales para probar las reglas de autoescalado y asegurarse de que funcion
 ---
 
 ## 📚 Material complementario
-- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capitulo 11, 12 y 13.
+- Building microservices: Designing fine-grained systems, Sam Newman (2021). O'Reilly. Capítulos 10, 11, 12 y 13.
 - Threat Modeling: Designing for Security, Adam Shostack (2014). Wiley.
 - [Principles of Chaos Engineering](https://principlesofchaos.org/)

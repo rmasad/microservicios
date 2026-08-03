@@ -7,7 +7,7 @@ marp: true
 <!-- paginate: true -->
 <!-- footer: Microservicios por Rafik Mas'ad Nasra -->
 <!-- author: Rafik Mas'ad Nasra -->
-<!-- title: Introducción a microservicios -->
+<!-- title: Interfaz -->
 <!-- size: 16:9 -->
 
 <style>    
@@ -63,7 +63,7 @@ Encontrar buenos especialistas (diseñadores, UX, front-end, etc) para cada equi
 
 ### 🎨 Consistencia
 
-Para asegurar consistencia en la interfaz es importante mantener ordenado un sistema de componentes y tener un sistema de diseño. Para eso existen framework (como [Chakra], Boostrap o Material Design) y patrones como [Atomic Design].
+Para asegurar consistencia en la interfaz es importante mantener ordenado un sistema de componentes y tener un sistema de diseño. Para eso existen frameworks (como [Chakra], Bootstrap o Material Design) y patrones como [Atomic Design].
 
 ---
 
@@ -94,7 +94,7 @@ La principal distinción entre un BFF y un Gateway de agregación central es que
 
 ### 🧮 ¿Cuantos BFF?
 
-- Estrictamente un solo BFF para cada tipo diferente de cliente, este.
+- Estrictamente un solo BFF para cada tipo diferente de cliente, aunque distintos clientes compartan el mismo tipo de interfaz.
 - El mismo BFF para más de un tipo de cliente, pero para el mismo tipo de interfaz.
 
 ---
@@ -110,9 +110,36 @@ La principal distinción entre un BFF y un Gateway de agregación central es que
 
 ---
 
-## 🧩 Ejemplo: `./demo_05`
+## 🧱 Micro-frontends
 
-- Interfaz funcionando con React. Se conecta al _API Gateway_, en _GraphQL_, a `demo_04`.
+Dividir el gateway no basta si la interfaz sigue siendo un monolito. Un solo front-end que consume todos los servicios vuelve a acoplar a los equipos: cada cambio pasa por el mismo código, el mismo build y el mismo despliegue.
+
+---
+
+### 📄 Composición por página
+
+Cada equipo es dueño de páginas completas (por ejemplo, todo lo que cuelga de `/teams`). La navegación entre páginas une la aplicación. Es la forma más simple de dividir la interfaz y calza bien cuando la unidad natural del sitio es la página.
+
+---
+
+### 🧩 Composición por widget
+
+Una misma página combina widgets desarrollados por distintos equipos. Requiere un contenedor común y cuidado extra con la consistencia visual y el peso de la página. Herramientas como Module Federation (Webpack) permiten cargar widgets desde builds separados.
+
+---
+
+### 🤔 ¿Cuándo conviene?
+
+- Cuando varios equipos necesitan desplegar su parte de la interfaz sin coordinarse con el resto.
+- Si la interfaz es una SPA chica mantenida por un solo equipo, dividirla agrega complejidad sin beneficio.
+
+Más detalles en Newman, capítulo 14.
+
+---
+
+## 🧩 Ejemplo: `./demo_06`
+
+- Interfaz funcionando con React. Se conecta al _API Gateway_, en _GraphQL_, de `demo_05`.
 - Usa [Chakra] como sistema de componentes/diseño.
 - Si se cae el servicio de *teams* sigue funcionando la vista de jugadores.
 - Se obtienen datos y se realizan mutaciones.
@@ -124,7 +151,7 @@ La principal distinción entre un BFF y un Gateway de agregación central es que
 
 # 📝 Tarea
 
-Implementa una interfaz de usuario (web o mobil) para el sistema a desarrollar en este trabajo utilizando los microservicios del resto de los equipos. Para esto debes implementar en el servicio de *API Gateway* la conexión con los servicios y en la interfaz las funcionalidades obteniendo y modificando los datos desde API Gateway.
+Implementa una interfaz de usuario (web o móvil) para el sistema a desarrollar en este trabajo utilizando los microservicios del resto de los equipos. Para esto debes implementar en el servicio de *API Gateway* la conexión con los servicios y en la interfaz las funcionalidades obteniendo y modificando los datos desde API Gateway.
 
 ---
 

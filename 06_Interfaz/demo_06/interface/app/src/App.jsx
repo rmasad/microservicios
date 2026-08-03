@@ -5,6 +5,8 @@ import Root from "./routes/root";
 import Players from "./routes/players";
 import Teams from "./routes/teams";
 import NewTeam from "./routes/NewTeam";
+import TeamDetail from "./routes/TeamDetail";
+import PlayerDetail from "./routes/PlayerDetail";
 
 let router = createBrowserRouter([
   {
@@ -16,6 +18,10 @@ let router = createBrowserRouter([
     element: <Players />,
   },
   {
+    path: "/players/:id",
+    element: <PlayerDetail />,
+  },
+  {
     path: "/teams",
     element: <Teams />,
   },
@@ -24,14 +30,14 @@ let router = createBrowserRouter([
     element: <NewTeam />,
   },
   {
+    path: "/teams/:id",
+    element: <TeamDetail />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
 ]);
-
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => router.dispose());
-}
 
 export default function App() {
   return <RouterProvider router={router} />;

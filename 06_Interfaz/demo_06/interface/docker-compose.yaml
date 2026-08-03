@@ -1,12 +1,10 @@
 services:
-  demo_05_interface:
+  demo_06_interface:
     build: .
     ports:
-      - "3000:3000"
-    volumes:
-      - ./app:/code
+      - "3000:80"
 
 networks:
   default:
-    name: demo_05
+    name: microsvcs
     external: true

@@ -57,7 +57,7 @@ def resolve_list_players(obj, resolve_info: GraphQLResolveInfo, team_id=None):
         return response.json()
 
 @query.field("listTeams")
-def resolve_list_players(obj, resolve_info: GraphQLResolveInfo):
+def resolve_list_teams(obj, resolve_info: GraphQLResolveInfo):
     response = requests.get(f"http://demo_04_service_02/teams")
 
     if response.status_code == 200:

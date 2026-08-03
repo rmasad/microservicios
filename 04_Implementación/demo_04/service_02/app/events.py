@@ -18,15 +18,18 @@ class Emit:
 
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='teams',
-                                      exchange_type='topic')
+                                      exchange_type='topic',
+                                      durable=True)
 
     def publish(self, id, action, payload):
-        routing_key = f"team.{action}.{id}"
+        routing_key = f"team.{id}.{action}"
         message = json.dumps(payload)
 
         self.channel.basic_publish(exchange='teams',
                                    routing_key=routing_key,
-                                   body=message)
+                                   body=message,
+                                   properties=pika.BasicProperties(
+                                       delivery_mode=pika.DeliveryMode.Persistent))
 
     def close(self):
         self.connection.close()
@@ -42,12 +45,13 @@ class Receive:
 
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='players',
-                                      exchange_type='topic')
+                                      exchange_type='topic',
+                                      durable=True)
 
-        self.channel.queue_declare('team_for_player_queue', exclusive=True)
+        self.channel.queue_declare('team_for_player_queue', durable=True)
         self.channel.queue_bind(exchange='players',
                                 queue="team_for_player_queue",
-                                routing_key="player.delete.*")
+                                routing_key="player.*.delete")
 
         self.channel.basic_consume(queue='team_for_player_queue',
                                    on_message_callback=self.callback)

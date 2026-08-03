@@ -1,11 +1,26 @@
-FROM node:alpine
+FROM node:20-alpine AS build
 
 WORKDIR /code
 
+COPY ./app/package.json ./app/package-lock.json ./
+
+RUN npm ci
+
 COPY ./app/ ./
 
-RUN ls
+RUN npm run build
 
-RUN npm i
+FROM nginx:alpine
 
-CMD ["npm", "run", "start"]
+COPY --from=build /code/dist /usr/share/nginx/html
+
+# React Router maneja las rutas: cualquier path cae en index.html
+COPY <<'EOF' /etc/nginx/conf.d/default.conf
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    location / {
+        try_files $uri /index.html;
+    }
+}
+EOF
