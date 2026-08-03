@@ -1,18 +1,27 @@
 #!/bin/bash
 # Puebla ambos servicios: primero crea los equipos en service_02 (puerto 5001)
 # y usa los IDs que devuelve la API para crear los jugadores en service_01.
-# Ambos servicios deben estar arriba antes de ejecutarlo.
+# Antes de poblar borra los datos existentes, así se puede ejecutar las veces
+# que haga falta sin duplicar. Ambos servicios deben estar arriba.
 
 set -euo pipefail
 
+SERVICE_01="http://localhost:5000"
+SERVICE_02="http://localhost:5001"
+
+list_ids() {
+  curl --fail-with-body -sS "$1" \
+    | python3 -c "import sys, json; print('\n'.join(item['id'] for item in json.load(sys.stdin)))"
+}
+
 create_team() {
-  curl --fail-with-body -sS -X POST http://localhost:5001/teams \
+  curl --fail-with-body -sS -X POST "$SERVICE_02/teams" \
     -H "Content-Type: application/json" -d "$1" \
     | python3 -c "import sys, json; print(json.load(sys.stdin)['id'])"
 }
 
 create_player() {
-  curl --fail-with-body -sS -X POST http://localhost:5000/players \
+  curl --fail-with-body -sS -X POST "$SERVICE_01/players" \
     -H "Content-Type: application/json" -d "$1"
   echo
 }
@@ -21,6 +30,19 @@ create_roster_player() {
   local name="$1" age="$2" number="$3" team_id="$4" description="$5"
   create_player "{\"name\": \"$name\", \"age\": $age, \"number\": $number, \"team_id\": \"$team_id\", \"description\": \"$description\"}"
 }
+
+echo "🧹 Limpiando datos existentes..."
+
+for player_id in $(list_ids "$SERVICE_01/players"); do
+  curl --fail-with-body -sS -o /dev/null -X DELETE "$SERVICE_01/players/$player_id"
+done
+
+for team_id in $(list_ids "$SERVICE_02/teams"); do
+  curl --fail-with-body -sS -o /dev/null -X DELETE "$SERVICE_02/teams/$team_id"
+done
+
+echo "✅ Limpieza completada"
+echo
 
 PALESTINO_ID=$(create_team '{
   "name": "Palestino",
@@ -60,3 +82,10 @@ create_roster_player "Claudio Aquino" 34 22 "$COLOCOLO_ID" "Mediocampista argent
 create_roster_player "Lautaro Pastrán" 23 10 "$COLOCOLO_ID" "Delantero chileno, extremo con velocidad y desborde."
 create_roster_player "Javier Correa" 33 9 "$COLOCOLO_ID" "Delantero argentino, referencia de área y goleador."
 create_roster_player "Maximiliano Romero" 27 19 "$COLOCOLO_ID" "Delantero argentino, alternativa ofensiva del Cacique."
+
+echo
+echo "🎉 Datos creados. Resumen:"
+curl --fail-with-body -sS "$SERVICE_02/teams" \
+  | python3 -c "import sys, json; [print(f\"  🏟️  {t['name']} ({t['country']}) -> {t['id']}\") for t in json.load(sys.stdin)]"
+curl --fail-with-body -sS "$SERVICE_01/players" \
+  | python3 -c "import sys, json; print(f'  ⚽ {len(json.load(sys.stdin))} jugadores en service_01')"
