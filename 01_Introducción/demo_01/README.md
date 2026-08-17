@@ -38,15 +38,3 @@ curl "http://localhost:5001/teams?expand=players"
 ```
 
 La segunda consulta demora varios segundos: por cada team se hace un request adicional a `service_01`, que además tiene un `sleep(3)` intencional para exagerar el efecto. Revisen los logs de ambos contenedores mientras corre.
-
-## `_log_aggregation` (base para la tarea)
-
-En `_log_aggregation/` hay un `docker-compose.yaml` con Loki, Grafana y Promtail para agregar los logs de los contenedores. Se levanta con `docker compose up` dentro de esa carpeta (usa la misma red `demo_01`). Grafana queda en `localhost:3000`; agreguen Loki como data source apuntando a `http://demo01_loki:3100`.
-
-Los `_docker-compose.yaml` de cada servicio muestran una alternativa: enviar los logs directo a Loki con el driver de logging `loki`. Ese driver no viene con Docker, hay que instalar el plugin antes de usarlo:
-
-```bash
-docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
-```
-
-Sin el plugin instalado, `docker compose up` falla con `error looking up logging plugin loki`.

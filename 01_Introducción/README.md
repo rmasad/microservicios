@@ -295,7 +295,7 @@ La nube facilita (y en muchos casos viabiliza) una arquitectura de microservicio
 
 # 📝 Tarea
 
-Crear un par de (nano) servicios mediante [FastAPI], que envíen sus _logs_ mediante [Promtail] a un _log aggregation system_ [Loki] y visualizar dichos _logs_ mediante [Grafana]. Todo debe estar desplegado mediante [docker-compose].
+Crear un par de (nano) servicios mediante [FastAPI], que envíen sus _logs_ mediante [Grafana Alloy] a un _log aggregation system_ [Loki] y visualizar dichos _logs_ mediante [Grafana]. Todo debe estar desplegado mediante [docker-compose].
 
 ---
 
@@ -307,7 +307,8 @@ Crear un par de (nano) servicios mediante [FastAPI], que envíen sus _logs_ medi
 [Docker]: https://www.docker.com/
 [Kubernetes]: https://kubernetes.io/
 [FastAPI]: https://fastapi.tiangolo.com/
-[Promtail]: https://grafana.com/docs/loki/latest/clients/promtail/
+[Grafana Alloy]: https://grafana.com/docs/alloy/latest/
+[guía de migración]: https://grafana.com/docs/loki/latest/setup/migrate/migrate-to-alloy/
 [Loki]: https://grafana.com/oss/loki/
 [Grafana]: https://grafana.com/grafana/
 [docker-compose]: https://docs.docker.com/compose/
