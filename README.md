@@ -26,5 +26,5 @@ Ustedes aprenderán a... diseñar e implementar un sistema en una arquitectura d
 ## 🔧 Para esto tendrán a disposición...
 
 - Estas presentaciones con el resumen de las 9 unidades.
-- Material complementario como libros y artículos para profundizar ciertos tópicos. 
+- Material complementario como libros y artículos para profundizar ciertos tópicos.
 - Ejemplos funcionales de cada una de las materias.

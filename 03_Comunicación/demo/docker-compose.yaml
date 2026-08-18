@@ -1,0 +1,57 @@
+services:
+  users:
+    build: ./users
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./users/app:/app/app
+    environment:
+      MONGODB_URL: mongodb://users-mongodb:27017
+    networks:
+      - microsvcs
+
+  channels:
+    build: ./channels
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./channels/app:/app/app
+    environment:
+      MONGODB_URL: mongodb://channels-mongodb:27017
+    networks:
+      - microsvcs
+
+  messages:
+    build: ./messages
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./messages/app:/app/app
+    environment:
+      USERS_URL: http://users:8000
+      CHANNELS_URL: http://channels:8000
+      MONGODB_URL: mongodb://messages-mongodb:27017
+    networks:
+      - microsvcs
+
+  users-mongodb:
+    image: mongo:7
+    volumes: [users-data:/data/db]
+    networks: [microsvcs]
+  channels-mongodb:
+    image: mongo:7
+    volumes: [channels-data:/data/db]
+    networks: [microsvcs]
+  messages-mongodb:
+    image: mongo:7
+    volumes: [messages-data:/data/db]
+    networks: [microsvcs]
+
+volumes:
+  users-data:
+  channels-data:
+  messages-data:
+
+networks:
+  microsvcs:
+    name: microsvcs

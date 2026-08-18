@@ -10,7 +10,7 @@ marp: true
 <!-- title: Comunicación entre servicios -->
 <!-- size: 16:9 -->
 
-<style>    
+<style>
     ul { margin: 0; }
     section.invert p { text-align: left; }
     section.invert h4 { text-align: left; }
@@ -89,7 +89,7 @@ Un componente se comporta de forma arbitraria: puede entregar información incor
 - **Sincrónico con bloqueo**: un microservicio hace una llamada a otro, la operación se bloquea esperando respuesta.
 - **Asincrónico sin bloqueo**: el microservicio que emite una llamada puede continuar sin recibir respuesta.
 
-<!-- 
+<!--
 No es necesario elegir un solo estilo de comunicación. Mezclar estilos, potenciando sus ventajas es normal.
 -->
 
@@ -105,7 +105,7 @@ No es necesario elegir un solo estilo de comunicación. Mezclar estilos, potenci
 
 ### ✋ (acoplamiento temporal)
 
-El acople temporal es cuando dos operaciones, de dos microservicios, tienen que pasar al mismo tiempo. 
+El acople temporal es cuando dos operaciones, de dos microservicios, tienen que pasar al mismo tiempo.
 
 ![h:225px](./assets/bms2_0203.png)
 
@@ -127,11 +127,11 @@ Esto se da porque algunas operaciones posteriores **requieren la respuesta**, o 
 #### 🧩 Ejemplo de _request-response_ sincrónico
 
 ```python
-url = f"http://players_service/players?team_id={team_id}"
-players = requests.get(url).json()
+url = f"http://messages/api/v1/channels/{channel_id}/messages"
+messages = requests.get(url).json()
 
-return [player for player in players
-        if player['country'] in countries_in_world_cup]
+return [message for message in messages
+        if message['author_id'] in followed_users]
 ```
 
 ---
@@ -179,7 +179,7 @@ import aiohttp
 
 session = aiohttp.ClientSession()
 
-url = f"http://players_service/players/train?team_id={team_id}"
+url = f"http://messages/api/v1/channels/{channel_id}/messages"
 asyncio.create_task(session.get(url))
 
 return {'working': True}
@@ -196,12 +196,12 @@ import aiohttp
 
 session = aiohttp.ClientSession()
 
-url = f"http://players_service/players?team_id={team_id}"
+url = f"http://messages/api/v1/channels/{channel_id}/messages"
 response = await session.get(url)
-players = await response.json()
+messages = await response.json()
 
-return [player for player in players
-        if player['country'] in countries_in_world_cup]
+return [message for message in messages
+        if message['author_id'] in followed_users]
 ```
 
 Aunque usamos `async`/`await`, esta corutina igual queda esperando la respuesta antes de continuar: sigue siendo _request-response_ con acoplamiento temporal.
@@ -322,14 +322,25 @@ Este patrón se utiliza cuando un microservicio pone datos en una ubicación def
 
 # 📝 Tarea
 
-Realicen una presentación del proyecto técnico descrito en clases. Debe incluir:
+En esta unidad se entrega [`demo`](./demo/): el código,
+`docker-compose`, documentación OpenAPI y contratos del sistema común de chat.
+Levántalo y revisa sus recursos de usuarios, canales, mensajes y eventos antes
+de diseñar tu extensión.
 
-- Descripción del problema y su contexto de negocio
-- Lenguaje ubicuo del proyecto
-- Diagrama de arquitectura
-- Listado preliminar de puntos de comunicación, cada uno con su patrón (_request-response_ sincrónico o asincrónico, _event-driven_, datos comunes)
+Cada grupo propone una **capacidad vertical** que agregue valor al chat. La capacidad será la misma en las entregas de las Unidades 4–9. La propuesta debe incluir:
 
-El [ejemplo](./ejemplo/README.md) muestra el nivel de detalle esperado.
+- Problema de usuario y contexto de la capacidad.
+- Lenguaje ubicuo propio y frontera de responsabilidad frente al núcleo.
+- Diagrama de arquitectura que incluya el chat base y el componente propuesto.
+- Listado de APIs y eventos que consumirá o publicará, con el patrón de
+  comunicación elegido para cada uno.
+- Un flujo de usuario de punta a punta que se pueda demostrar al final del
+  curso.
+
+No se puede acceder a la base de datos ni a detalles internos de `users`,
+`channels` o `messages`.
+La propuesta debe usar exclusivamente los contratos publicados. El ejemplo
+transversal del curso será una capacidad de **notificaciones** sobre este chat.
 
 ---
 
